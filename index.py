@@ -25,20 +25,25 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.direction = 0
 		self.action = 0
 
+	'''Acciones
+		1. Caminar
+		2. Puno
+		3. Defenderse '''
+
 	def update(self):
-		if self.direction == 1:
+		if self.direction == 1 and self.action == 1:
 			if self.rect.x <= width - 150:
 				self.rect.x += 5
-		elif self.direction == 2:
+		elif self.direction == 2 and self.action == 1:
 			if self.rect.x >= 30:
 				self.rect.x -= 5
-		elif self.direction == 3:
+		elif self.direction == 3 and self.action == 1:
 			if self.rect.y >= 260:
 				self.rect.y -= 5
-		elif self.direction == 4:
+		elif self.direction == 4 and self.action == 1:
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
-		if self.action == 1:
+		if self.action == 2:
 			self.action = 0
 
 #Enemy agents class
@@ -65,6 +70,7 @@ class agentEnemies(pygame.sprite.Sprite):
 			elif self.rect.y < posHomerY:
 				self.direction = 4
 		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
+			print "entro"
 			self.action = 1
 		if self.direction == 1:
 			self.rect.x += 5
@@ -78,7 +84,7 @@ class agentEnemies(pygame.sprite.Sprite):
 				self.rect.y += 5
 
 def agentEnemiesGenerator():
-	if random.randint(0, 100) == 2:
+	if random.randint(0, 50) == 2:
 		agent = agentEnemies()
 		agent.rect.x = 510
 		agent.rect.y = random.randrange(260, height - 60, 5)
@@ -111,25 +117,43 @@ if __name__ == '__main__':
 				done = True
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_RIGHT:
+					homero.action = 1
 					homero.direction = 1
 				elif event.key == pygame.K_l:
+					homero.action = 1
 					homero.direction = 2
 				elif event.key == pygame.K_UP:
+					homero.action = 1
 					homero.direction = 3
 				elif event.key == pygame.K_b:
+					homero.action = 1
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:
+					homero.action = 1
 					homero.direction = 0
 				elif event.key == pygame.K_p:
-					homero.action = 1
+					homero.action = 2
+				elif event.key == pygame.K_d:
+					homero.action = 3
 
 		ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
 		for x in ls_colhomer_agents:
-			if homero.action == 1:
+			if homero.action == 2:
 				x.salud -= 1
 			if x.salud == 0:
 				agents.remove(x)
 				todos.remove(x)
+
+		for ae in agents:
+			ls_agente_homero = pygame.sprite.spritecollide(ae, jugadores, False)
+			for x in ls_agente_homero:
+				print "Salud Homero: ", x.salud
+				if ae.action == 1 and x.action != 3:
+					x.salud -= 1
+				if x.salud == 0:
+					jugadores.remove(x)
+					todos.remove(x)
+					done = True
 
 		if homero.direction == 1 and homero.rect.x >= width - 150 and posx >= width - imagenFondoWidth:
 			posx -= 5

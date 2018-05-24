@@ -23,6 +23,7 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.salud = 10
 		self.direction = 0
+		self.action = 0
 
 	def update(self):
 		if self.direction == 1:
@@ -37,6 +38,8 @@ class homerPlayer(pygame.sprite.Sprite):
 		elif self.direction == 4:
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
+		if self.action == 1:
+			self.action = 0
 
 #Enemy agents class
 class agentEnemies(pygame.sprite.Sprite):
@@ -51,27 +54,28 @@ class agentEnemies(pygame.sprite.Sprite):
 		self.action = 0
 
 	def update(self, posHomerX, posHomerY):
-		if (abs(self.rect.x - posHomerX) < abs(self.rect.y - posHomerY)):
-			if self.rect.x < (posHomerX + 5):
+		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 20:
+			if self.rect.x > posHomerX:
 				self.direction = 1
-			elif self.rect.x > (posHomerX - 5):
+			elif self.rect.x < posHomerX:
 				self.direction = 2
-		elif (abs(self.rect.x - posHomerX) > abs(self.rect.y - posHomerY)):
-			if self.rect.y < posHomerY:
+		elif (abs(self.rect.x - posHomerX) + 20) > (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.y - posHomerY) > 20:
+			if self.rect.y > posHomerY:
 				self.direction = 3
-			elif self.rect.y > posHomerY:
+			elif self.rect.y < posHomerY:
 				self.direction = 4
-		elif self.rect.x == posHomerX - 20 and self.rect.y ==posHomerY:
+		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
 			self.action = 1
-		print self.action
 		if self.direction == 1:
 			self.rect.x += 5
 		elif self.direction == 2:
 			self.rect.x -= 5
 		elif self.direction == 3:
-			self.rect.y -= 5
+			if self.rect.y >= 260:
+				self.rect.y -= 5
 		elif self.direction == 4:
-			self.rect.y += 5
+			if self.rect.y <= height - 60:
+				self.rect.y += 5
 
 def agentEnemiesGenerator():
 	if random.randint(0, 100) == 2:
@@ -116,6 +120,16 @@ if __name__ == '__main__':
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:
 					homero.direction = 0
+				elif event.key == pygame.K_p:
+					homero.action = 1
+
+		ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
+		for x in ls_colhomer_agents:
+			if homero.action == 1:
+				x.salud -= 1
+			if x.salud == 0:
+				agents.remove(x)
+				todos.remove(x)
 
 		if homero.direction == 1 and homero.rect.x >= width - 150 and posx >= width - imagenFondoWidth:
 			posx -= 5

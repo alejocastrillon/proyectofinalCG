@@ -8,10 +8,33 @@ posx = 0
 posy = -10
 size = width, height = [500, 500]
 oleadas = 0
+quantityDonuts = 0
 reloj = pygame.time.Clock()
 jugadores = pygame.sprite.Group()
 agents = pygame.sprite.Group()
+donuts = pygame.sprite.Group()
+beers = pygame.sprite.Group()
 todos = pygame.sprite.Group()
+
+#Donut's class
+class Donut(pygame.sprite.Sprite):
+	"""docstring for Donuts"""
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface([30, 30])
+		self.image.fill([240, 39, 200])
+		self.rect = self.image.get_rect()
+
+#Beer Duff class
+class beerDuff(pygame.sprite.Sprite):
+	"""docstring for beerDuff"""
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface([30, 30])
+		self.image.fill([240, 39, 72])
+		self.rect = self.image.get_rect()
+		
+
 
 #Class of Homero Player
 class homerPlayer(pygame.sprite.Sprite):
@@ -59,7 +82,7 @@ class agentEnemies(pygame.sprite.Sprite):
 		self.action = 0
 
 	def update(self, posHomerX, posHomerY):
-		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 20:
+		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 50:
 			if self.rect.x > posHomerX:
 				self.direction = 1
 			elif self.rect.x < posHomerX:
@@ -92,6 +115,22 @@ def agentEnemiesGenerator():
 		agents.add(agent)
 		todos.add(agent)
 
+def positionBeerDuff(quantity):
+	for x in xrange(quantity):
+		b = beerDuff()
+		b.rect.y = random.randrange(260, height - 60, 5)
+		b.rect.x = random.randrange(5, 4080, 5)
+		beers.add(b)
+		todos.add(b)
+
+def positionDonuts(quantity):
+	for x in xrange(quantity):
+		d = Donut();
+		d.rect.y = random.randrange(260, height - 60, 5)
+		d.rect.x = random.randrange(5, 4080, 5)
+		donuts.add(d)
+		todos.add(d)
+
 
 def generateAmbient():
 	pantalla.blit(imagenFondo, [posx, posy])
@@ -109,6 +148,8 @@ if __name__ == '__main__':
 	jugadores.add(homero)
 	todos.add(homero)
 	generateAmbient()
+	positionDonuts(20)
+	positionBeerDuff(10)
 	pygame.display.flip()
 	done = False
 	while not done:
@@ -155,12 +196,37 @@ if __name__ == '__main__':
 					todos.remove(x)
 					done = True
 
+		ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
+		for x in ls_col_donuts:
+			donuts.remove(x)
+			todos.remove(x)
+			quantityDonuts += 1
+			print "Cantidad donuts: ", quantityDonuts
+
+		ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
+		for x in ls_col_beers:
+			beers.remove(x)
+			todos.remove(x)
+			homero.salud += 3
+			print "Salud homero: ", homero.salud
+
 		if homero.direction == 1 and homero.rect.x >= width - 150 and posx >= width - imagenFondoWidth:
 			posx -= 5
 			for x in agents:
 				x.rect.x -= 5
+			for x in donuts:
+				x.rect.x -= 5
+			for x in beers:
+				x.rect.x -= 5
+
 		elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
 			posx += 5
+			for x in agents:
+				x.rect.x += 5
+			for x in donuts:
+				x.rect.x += 5
+			for x in beers:
+				x.rect.x += 5
 
 		pantalla.fill([255, 200, 200])
 		agentEnemiesGenerator()

@@ -21,8 +21,8 @@ class Donut(pygame.sprite.Sprite):
 	"""docstring for Donuts"""
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface([30, 30])
-		self.image.fill([240, 39, 200])
+		self.image = pygame.image.load('source/donnut.png')
+		#self.image.fill([240, 39, 200])
 		self.rect = self.image.get_rect()
 
 #Beer Duff class
@@ -30,8 +30,8 @@ class beerDuff(pygame.sprite.Sprite):
 	"""docstring for beerDuff"""
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface([30, 30])
-		self.image.fill([240, 39, 72])
+		self.image = pygame.image.load('source/duff.png')
+		#self.image.fill([240, 39, 72])
 		self.rect = self.image.get_rect()
 		
 
@@ -39,14 +39,15 @@ class beerDuff(pygame.sprite.Sprite):
 #Class of Homero Player
 class homerPlayer(pygame.sprite.Sprite):
 	"""docstring for homerPlayer"""
-	def __init__(self):
+	def __init__(self, matrix):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface([50, 50])
-		self.image.fill([255, 255, 255])
+		self.matrix = matrix
+		self.image = self.matrix[0][0]
 		self.rect = self.image.get_rect()
 		self.salud = 10
 		self.direction = 0
 		self.action = 0
+		self.index = 0
 
 	'''Acciones
 		1. Caminar
@@ -57,17 +58,80 @@ class homerPlayer(pygame.sprite.Sprite):
 		if self.direction == 1 and self.action == 1:
 			if self.rect.x <= width - 150:
 				self.rect.x += 5
+			if self.salud >= 5:
+				self.image = self.matrix[0][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
+			else:
+				self.image = self.matrix[3][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
+
 		elif self.direction == 2 and self.action == 1:
 			if self.rect.x >= 30:
 				self.rect.x -= 5
+			if self.salud >= 5:
+				self.image = self.matrix[0][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
+			else:
+				self.image = self.matrix[3][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
 		elif self.direction == 3 and self.action == 1:
 			if self.rect.y >= 260:
 				self.rect.y -= 5
+			if self.salud >= 5:
+				self.image = self.matrix[0][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
+			else:
+				self.image = self.matrix[3][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
 		elif self.direction == 4 and self.action == 1:
-			if self.rect.y <= height - 60:
+			if self.rect.y <= height - 120:
 				self.rect.y += 5
+			if self.salud >= 5:
+				self.image = self.matrix[0][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
+			else:
+				self.image = self.matrix[3][self.index]
+				self.index += 1
+				if self.index >= 6:
+					self.index = 0
 		if self.action == 2:
-			self.action = 0
+			self.direction = 0
+			self.image = self.matrix[2][self.index]
+			self.index += 1
+			if self.index >= 3:
+				if self.salud >= 5:
+					self.image = self.matrix[0][0]
+				else:
+					self.image = self.matrix[3][0]
+				self.index = 0
+				self.action = 0
+		if self.action == 3:
+			self.direction = 0
+			self.image = self.matrix[1][self.index]
+			self.index += 1
+			if self.index >= 3:
+				if self.salud >= 5:
+					self.image = self.matrix[0][0]
+				else:
+					self.image = self.matrix[3][0]
+				self.index = 0
+				self.action = 0
+
+
 
 #Enemy agents class
 class agentEnemies(pygame.sprite.Sprite):
@@ -106,6 +170,21 @@ class agentEnemies(pygame.sprite.Sprite):
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
 
+def recortarSprite(nombreArchivo, cantidadX, cantidadY):
+	imageSprite = pygame.image.load(nombreArchivo)
+	imageInfo = imageSprite.get_rect()
+	imageWidth = imageInfo[2]
+	imageHeight = imageInfo[3]
+	matrix = []
+	corteY = (imageHeight / cantidadY)
+	corteX = (imageWidth / cantidadX)
+	for y in range(cantidadY):
+		matrix.append([])
+		for x in range(cantidadX):
+			cuadro = imageSprite.subsurface(corteX * x, corteY * y, corteX,corteY)
+			matrix[y].append(cuadro)
+	return matrix
+
 def agentEnemiesGenerator():
 	if random.randint(0, 50) == 2:
 		agent = agentEnemies()
@@ -142,7 +221,8 @@ if __name__ == '__main__':
 	imagenFondoWidth = imagenFondoInfo[2]
 	imagenFondoHeight = imagenFondoInfo[3]
 	pantalla = pygame.display.set_mode(size)
-	homero = homerPlayer()
+	homeroSprite = recortarSprite('source/Finalizado_SinFondo.png', 8, 6);
+	homero = homerPlayer(homeroSprite)
 	homero.rect.x = 0
 	homero.rect.y = 400
 	jugadores.add(homero)
@@ -177,6 +257,7 @@ if __name__ == '__main__':
 				elif event.key == pygame.K_d:
 					homero.action = 3
 
+		#Colicion entre homero y algun agente, descuenta la salud de un agente si Homero esta dando un golpe
 		ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
 		for x in ls_colhomer_agents:
 			if homero.action == 2:
@@ -185,6 +266,7 @@ if __name__ == '__main__':
 				agents.remove(x)
 				todos.remove(x)
 
+		#Colicion entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
 		for ae in agents:
 			ls_agente_homero = pygame.sprite.spritecollide(ae, jugadores, False)
 			for x in ls_agente_homero:
@@ -196,6 +278,7 @@ if __name__ == '__main__':
 					todos.remove(x)
 					done = True
 
+		#Colicion entre Homero y Donnuts
 		ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
 		for x in ls_col_donuts:
 			donuts.remove(x)
@@ -203,6 +286,7 @@ if __name__ == '__main__':
 			quantityDonuts += 1
 			print "Cantidad donuts: ", quantityDonuts
 
+		#Colicion entre Homero y las cervezas Duff
 		ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
 		for x in ls_col_beers:
 			beers.remove(x)
@@ -210,6 +294,7 @@ if __name__ == '__main__':
 			homero.salud += 3
 			print "Salud homero: ", homero.salud
 
+		#Movimiento de fondo
 		if homero.direction == 1 and homero.rect.x >= width - 150 and posx >= width - imagenFondoWidth:
 			posx -= 5
 			for x in agents:
@@ -227,6 +312,9 @@ if __name__ == '__main__':
 				x.rect.x += 5
 			for x in beers:
 				x.rect.x += 5
+
+		if homero.rect.x >= 4030 and len(agents) == 0:
+			done = True
 
 		pantalla.fill([255, 200, 200])
 		agentEnemiesGenerator()

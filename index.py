@@ -248,7 +248,7 @@ if __name__ == '__main__':
 	homero.rect.y = 400
 	cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
 	carta = Letter(cartaSprite)
-	carta.rect.x = 4020
+	carta.rect.x = 3950
 	carta.rect.y = height - 100
 	letters.add(carta)
 	todos.add(carta)
@@ -267,13 +267,13 @@ if __name__ == '__main__':
 				if event.key == pygame.K_RIGHT:
 					homero.action = 1
 					homero.direction = 1
-				elif event.key == pygame.K_l:
+				elif event.key == pygame.K_LEFT:
 					homero.action = 1
 					homero.direction = 2
 				elif event.key == pygame.K_UP:
 					homero.action = 1
 					homero.direction = 3
-				elif event.key == pygame.K_b:
+				elif event.key == pygame.K_DOWN:
 					homero.action = 1
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:

@@ -14,6 +14,7 @@ jugadores = pygame.sprite.Group()
 agents = pygame.sprite.Group()
 donuts = pygame.sprite.Group()
 beers = pygame.sprite.Group()
+letters = pygame.sprite.Group()
 todos = pygame.sprite.Group()
 
 #Donut's class
@@ -24,6 +25,22 @@ class Donut(pygame.sprite.Sprite):
 		self.image = pygame.image.load('source/donnut.png')
 		#self.image.fill([240, 39, 200])
 		self.rect = self.image.get_rect()
+
+class Letter(pygame.sprite.Sprite):
+	"""docstring for Letter"""
+	def __init__(self, matrix):
+		pygame.sprite.Sprite.__init__(self)
+		self.f = matrix
+		self.image = self.f[0][0]
+		self.rect = self.image.get_rect()
+		self.index = 0
+
+	def update(self):
+		self.image = self.f[0][self.index]
+		self.index += 1
+		if self.index >= 5:
+			self.index = 0
+		
 
 #Beer Duff class
 class beerDuff(pygame.sprite.Sprite):
@@ -46,6 +63,7 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.salud = 10
 		self.direction = 0
+		self.winner = False
 		self.action = 0
 		self.index = 0
 
@@ -56,7 +74,7 @@ class homerPlayer(pygame.sprite.Sprite):
 
 	def update(self):
 		if self.direction == 1 and self.action == 1:
-			if self.rect.x <= width - 150:
+			if self.rect.x <= width - 214:
 				self.rect.x += 5
 			if self.salud >= 5:
 				self.image = self.matrix[0][self.index]
@@ -228,6 +246,12 @@ if __name__ == '__main__':
 	homero = homerPlayer(homeroSprite)
 	homero.rect.x = 0
 	homero.rect.y = 400
+	cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
+	carta = Letter(cartaSprite)
+	carta.rect.x = 4020
+	carta.rect.y = height - 100
+	letters.add(carta)
+	todos.add(carta)
 	jugadores.add(homero)
 	todos.add(homero)
 	generateAmbient()
@@ -243,13 +267,13 @@ if __name__ == '__main__':
 				if event.key == pygame.K_RIGHT:
 					homero.action = 1
 					homero.direction = 1
-				elif event.key == pygame.K_LEFT:
+				elif event.key == pygame.K_l:
 					homero.action = 1
 					homero.direction = 2
 				elif event.key == pygame.K_UP:
 					homero.action = 1
 					homero.direction = 3
-				elif event.key == pygame.K_DOWN:
+				elif event.key == pygame.K_b:
 					homero.action = 1
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:
@@ -297,14 +321,23 @@ if __name__ == '__main__':
 			homero.salud += 3
 			print "Salud homero: ", homero.salud
 
+		#Colicion entre Homero y Carta
+		ls_col_letter = pygame.sprite.spritecollide(homero, letters, False)
+		for x in ls_col_letter:
+			homero.winner = True
+			print "Has ganado"
+			done = True
+
 		#Movimiento de fondo
-		if homero.direction == 1 and homero.rect.x >= width - 150 and posx >= width - imagenFondoWidth:
+		if homero.direction == 1 and homero.rect.x >= width - 214 and posx >= width - imagenFondoWidth:
 			posx -= 5
 			for x in agents:
 				x.rect.x -= 5
 			for x in donuts:
 				x.rect.x -= 5
 			for x in beers:
+				x.rect.x -= 5
+			for x in letters:
 				x.rect.x -= 5
 
 		elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
@@ -315,15 +348,16 @@ if __name__ == '__main__':
 				x.rect.x += 5
 			for x in beers:
 				x.rect.x += 5
-
-		if homero.rect.x >= 4030 and len(agents) == 0:
-			done = True
+			for x in letters:
+				x.rect.x += 5
 
 		pantalla.fill([255, 200, 200])
-		agentEnemiesGenerator()
+		if homero.winner == False:
+			agentEnemiesGenerator()
 		generateAmbient()
 		todos.draw(pantalla)
 		jugadores.update()
 		agents.update(homero.rect.x, homero.rect.y)
+		letters.update()
 		pygame.display.flip()
 		reloj.tick(15)

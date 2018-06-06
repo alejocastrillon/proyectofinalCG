@@ -136,10 +136,11 @@ class homerPlayer(pygame.sprite.Sprite):
 #Enemy agents class
 class agentEnemies(pygame.sprite.Sprite):
 	"""docstring for agentEnemies"""
-	def __init__(self):
+	def __init__(self, matrix):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface([50, 50])
-		self.image.fill([0, 0, 0])
+		self.f = matrix
+		self.image = self.f[0][6]
+		#self.image.fill([0, 0, 0])
 		self.rect = self.image.get_rect()
 		self.salud = 5
 		self.direction = 0
@@ -158,6 +159,7 @@ class agentEnemies(pygame.sprite.Sprite):
 				self.direction = 4
 		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
 			print "entro"
+			self.direction = 0
 			self.action = 1
 		if self.direction == 1:
 			self.rect.x += 5
@@ -186,8 +188,9 @@ def recortarSprite(nombreArchivo, cantidadX, cantidadY):
 	return matrix
 
 def agentEnemiesGenerator():
+	agenteSprite = recortarSprite('source/Espejo_Agnte.png', 7, 19)
 	if random.randint(0, 50) == 2:
-		agent = agentEnemies()
+		agent = agentEnemies(agenteSprite)
 		agent.rect.x = 510
 		agent.rect.y = random.randrange(260, height - 60, 5)
 		agent.direction = 2
@@ -240,13 +243,13 @@ if __name__ == '__main__':
 				if event.key == pygame.K_RIGHT:
 					homero.action = 1
 					homero.direction = 1
-				elif event.key == pygame.K_l:
+				elif event.key == pygame.K_LEFT:
 					homero.action = 1
 					homero.direction = 2
 				elif event.key == pygame.K_UP:
 					homero.action = 1
 					homero.direction = 3
-				elif event.key == pygame.K_b:
+				elif event.key == pygame.K_DOWN:
 					homero.action = 1
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:
@@ -323,4 +326,4 @@ if __name__ == '__main__':
 		jugadores.update()
 		agents.update(homero.rect.x, homero.rect.y)
 		pygame.display.flip()
-		reloj.tick(10)
+		reloj.tick(15)

@@ -206,7 +206,7 @@ def recortarSprite(nombreArchivo, cantidadX, cantidadY):
 	return matrix
 
 def agentEnemiesGenerator():
-	agenteSprite = recortarSprite('source/Espejo_Agnte.png', 7, 19)
+	agenteSprite = recortarSprite('source/Espejo_AgnteNoFondo.png', 7, 19)
 	if random.randint(0, 50) == 2:
 		agent = agentEnemies(agenteSprite)
 		agent.rect.x = 510

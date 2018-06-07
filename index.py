@@ -248,7 +248,7 @@ class homerPlayer(pygame.sprite.Sprite):
 				if self.index >= 6:
 					self.index = 0
 		elif self.direction == 4 and self.action == 1:
-			if self.rect.y <= height - 120:
+			if self.rect.y <= 500 - 120:
 				self.rect.y += 5
 			if self.salud >= 5:
 				self.image = self.matrix[0][self.index]
@@ -365,7 +365,7 @@ def agentEnemiesGenerator():
 def positionBeerDuff(quantity):
 	for x in xrange(quantity):
 		b = beerDuff()
-		b.rect.y = random.randrange(260, height - 60, 5)
+		b.rect.y = random.randrange(260, 500 - 60, 5)
 		b.rect.x = random.randrange(5, 4080, 5)
 		beers.add(b)
 		todos.add(b)
@@ -373,7 +373,7 @@ def positionBeerDuff(quantity):
 def positionDonuts(quantity):
 	for x in xrange(quantity):
 		d = Donut();
-		d.rect.y = random.randrange(260, height - 60, 5)
+		d.rect.y = random.randrange(260, 500 - 60, 5)
 		d.rect.x = random.randrange(5, 4080, 5)
 		donuts.add(d)
 		todos.add(d)
@@ -417,7 +417,7 @@ if __name__ == '__main__':
 			if nivel == 2 and entrar == True:
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
-				stewiePlayer.rect.x = width + 50
+				stewiePlayer.rect.x = 0
 				stewiePlayer.rect.y = height - 100
 				posx = -10
 				groupStewie.add(stewiePlayer)
@@ -432,13 +432,13 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_LEFT:
+					elif event.key == pygame.K_l:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_DOWN:
+					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:

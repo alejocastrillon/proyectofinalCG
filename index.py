@@ -16,6 +16,9 @@ donuts = pygame.sprite.Group()
 beers = pygame.sprite.Group()
 letters = pygame.sprite.Group()
 todos = pygame.sprite.Group()
+groupStewie = pygame.sprite.Group()
+nivel = 1
+entrar = False
 
 #Donut's class
 class Donut(pygame.sprite.Sprite):
@@ -40,6 +43,44 @@ class Letter(pygame.sprite.Sprite):
 		self.index += 1
 		if self.index >= 5:
 			self.index = 0
+
+class Stewie(pygame.sprite.Sprite):
+	"""docstring for Stewie"""
+	def __init__(self, matrix):
+		super(Stewie, self).__init__()
+		self.f = matrix
+		self.image = self.f[0][0]
+		self.rect = self.image.get_rect()
+		self.index = 0
+		self.direction = 0
+		self.action = 0
+
+	def update(self, posHomerX, posHomerY):
+		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 50:
+			if self.rect.x > posHomerX:
+				self.direction = 1
+			elif self.rect.x < posHomerX:
+				self.direction = 2
+		elif (abs(self.rect.x - posHomerX) + 20) > (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.y - posHomerY) > 20:
+			if self.rect.y > posHomerY:
+				self.direction = 3
+			elif self.rect.y < posHomerY:
+				self.direction = 4
+		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
+			print "entro"
+			self.direction = 0
+			self.action = 1
+		if self.direction == 1:
+			self.rect.x += 5
+		elif self.direction == 2:
+			self.rect.x -= 5
+		elif self.direction == 3:
+			if self.rect.y >= 260:
+				self.rect.y -= 5
+		elif self.direction == 4:
+			if self.rect.y <= height - 60:
+				self.rect.y += 5
+
 		
 
 #Beer Duff class
@@ -273,6 +314,19 @@ if __name__ == '__main__':
 	pygame.display.flip()
 	done = False
 	while not done:
+		if nivel == 2 and entrar == True:
+			spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
+			stewiePlayer = Stewie(spriteStewie)
+			stewiePlayer.rect.x = 4060
+			stewiePlayer.rect.y = height - 100
+			posx = 0
+			generateAmbient()
+			groupStewie.add(stewiePlayer)
+			todos.add(stewiePlayer)
+			entrar = False
+			pygame.display.flip()
+
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				done = True
@@ -280,13 +334,13 @@ if __name__ == '__main__':
 				if event.key == pygame.K_RIGHT:
 					homero.action = 1
 					homero.direction = 1
-				elif event.key == pygame.K_LEFT:
+				elif event.key == pygame.K_l:
 					homero.action = 1
 					homero.direction = 2
 				elif event.key == pygame.K_UP:
 					homero.action = 1
 					homero.direction = 3
-				elif event.key == pygame.K_DOWN:
+				elif event.key == pygame.K_b:
 					homero.action = 1
 					homero.direction = 4
 				elif event.key == pygame.K_SPACE:
@@ -339,7 +393,8 @@ if __name__ == '__main__':
 		for x in ls_col_letter:
 			homero.winner = True
 			print "Has ganado"
-			done = True
+			nivel += 1
+			entrar = True
 
 		#Movimiento de fondo
 		if homero.direction == 1 and homero.rect.x >= width - 214 and posx >= width - imagenFondoWidth:
@@ -370,7 +425,10 @@ if __name__ == '__main__':
 		generateAmbient()
 		todos.draw(pantalla)
 		jugadores.update()
-		agents.update(homero.rect.x, homero.rect.y)
+		if nivel == 1:
+			agents.update(homero.rect.x, homero.rect.y)
+		elif nivel == 2:
+			groupStewie.update(homero.rect.x, homero.rect.y)
 		letters.update()
 		pygame.display.flip()
 		reloj.tick(15)

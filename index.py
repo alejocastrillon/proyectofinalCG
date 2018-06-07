@@ -2,6 +2,7 @@
 
 import pygame
 import random
+import os
 from math import *
 
 ROJO=[255,0,0]
@@ -25,6 +26,14 @@ imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
 
+class Sounds():
+    def __init__(self):
+        self.herido = pygame.mixer.Sound(os.path.join("source/sounds/doh.wav"))
+        self.herido.set_volume(0.1)
+        self.beer = pygame.mixer.Sound(os.path.join("source/sounds/beer11.wav"))
+        self.beer.set_volume(0.2)
+        self.golpe = pygame.mixer.Sound(os.path.join("source/sounds/golpe.ogx"))
+        self.golpe.set_volume(0.2)
 #Option Class
 class Opcion:
     def __init__(self, idop, texto, pos):
@@ -388,7 +397,9 @@ if __name__ == '__main__':
 	fuente=pygame.font.Font('source/menu/Simpsonfont.ttf',40)
 	a = PantallaInicio()
 	if a == 1:
-		pygame.mixer.init(0)
+		sounds=Sounds()
+		pygame.mixer.music.stop()
+		pygame.mixer.init()
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
 		pantalla = pygame.display.set_mode(size)
@@ -454,6 +465,7 @@ if __name__ == '__main__':
 			for x in ls_colhomer_agents:
 				if homero.action == 2:
 					x.salud -= 1
+					sounds.golpe.play()
 				if x.salud == 0:
 					agents.remove(x)
 					todos.remove(x)
@@ -465,6 +477,7 @@ if __name__ == '__main__':
 					print "Salud Homero: ", x.salud
 					if ae.action == 1 and x.action != 3:
 						x.salud -= 1
+						sounds.herido.play()
 					if x.salud == 0:
 						jugadores.remove(x)
 						todos.remove(x)
@@ -485,6 +498,7 @@ if __name__ == '__main__':
 				todos.remove(x)
 				homero.salud += 3
 				print "Salud homero: ", homero.salud
+				sounds.beer.play()
 
 			#Colicion entre Homero y Carta
 			ls_col_letter = pygame.sprite.spritecollide(homero, letters, False)

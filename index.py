@@ -390,7 +390,7 @@ if __name__ == '__main__':
 	if a == 1:
 		pygame.mixer.init(0)
 		pygame.mixer.music.set_volume(0)
-		size = width, heigth = [500, 500]
+		size = width, heigth = [800, 500]
 		pantalla = pygame.display.set_mode(size)
 		imagenFondo = pygame.image.load('source/springfield.png')
 		imagenFondoInfo = imagenFondo.get_rect()
@@ -528,6 +528,8 @@ if __name__ == '__main__':
 			elif nivel == 2:
 				groupStewie.update(homero.rect.x, homero.rect.y)
 			letters.update()
+			pygame.draw.rect(pantalla, BLANCO,(8,8 ,200 ,14))
+			pygame.draw.rect(pantalla, NEGRO,(10,10 , homero.salud ,10))
 			pygame.display.flip()
 			reloj.tick(15)
 	elif a == 2:

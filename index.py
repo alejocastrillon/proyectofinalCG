@@ -388,6 +388,8 @@ if __name__ == '__main__':
 	fuente=pygame.font.Font('source/menu/Simpsonfont.ttf',40)
 	a = PantallaInicio()
 	if a == 1:
+		pygame.mixer.init(0)
+		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [500, 500]
 		pantalla = pygame.display.set_mode(size)
 		imagenFondo = pygame.image.load('source/springfield.png')
@@ -521,7 +523,10 @@ if __name__ == '__main__':
 			generateAmbient()
 			todos.draw(pantalla)
 			jugadores.update()
-			agents.update(homero.rect.x, homero.rect.y)
+			if nivel == 1:
+				agents.update(homero.rect.x, homero.rect.y)
+			elif nivel == 2:
+				groupStewie.update(homero.rect.x, homero.rect.y)
 			letters.update()
 			pygame.display.flip()
 			reloj.tick(15)

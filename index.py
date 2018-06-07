@@ -357,7 +357,7 @@ def agentEnemiesGenerator():
 	if random.randint(0, 50) == 2:
 		agent = agentEnemies(agenteSprite)
 		agent.rect.x = width + 10
-		agent.rect.y = random.randrange(260, height - 60, 5)
+		agent.rect.y = random.randrange(260, 500 - 60, 5)
 		agent.direction = 2
 		agents.add(agent)
 		todos.add(agent)

@@ -183,7 +183,7 @@ class Stewie(pygame.sprite.Sprite):
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
 
-
+		
 
 #Beer Duff class
 class beerDuff(pygame.sprite.Sprite):
@@ -193,7 +193,7 @@ class beerDuff(pygame.sprite.Sprite):
 		self.image = pygame.image.load('source/duff.png')
 		#self.image.fill([240, 39, 72])
 		self.rect = self.image.get_rect()
-
+		
 
 
 #Class of Homero Player
@@ -257,7 +257,7 @@ class homerPlayer(pygame.sprite.Sprite):
 				if self.index >= 6:
 					self.index = 0
 		elif self.direction == 4 and self.action == 1:
-			if self.rect.y <= height - 120:
+			if self.rect.y <= 500 - 120:
 				self.rect.y += 5
 			if self.salud >= 5:
 				self.image = self.matrix[0][self.index]
@@ -366,7 +366,7 @@ def agentEnemiesGenerator():
 	if random.randint(0, 50) == 2:
 		agent = agentEnemies(agenteSprite)
 		agent.rect.x = width + 10
-		agent.rect.y = random.randrange(260, height - 60, 5)
+		agent.rect.y = random.randrange(260, 500 - 60, 5)
 		agent.direction = 2
 		agents.add(agent)
 		todos.add(agent)
@@ -374,7 +374,7 @@ def agentEnemiesGenerator():
 def positionBeerDuff(quantity):
 	for x in xrange(quantity):
 		b = beerDuff()
-		b.rect.y = random.randrange(260, height - 60, 5)
+		b.rect.y = random.randrange(260, 500 - 60, 5)
 		b.rect.x = random.randrange(5, 4080, 5)
 		beers.add(b)
 		todos.add(b)
@@ -382,7 +382,7 @@ def positionBeerDuff(quantity):
 def positionDonuts(quantity):
 	for x in xrange(quantity):
 		d = Donut();
-		d.rect.y = random.randrange(260, height - 60, 5)
+		d.rect.y = random.randrange(260, 500 - 60, 5)
 		d.rect.x = random.randrange(5, 4080, 5)
 		donuts.add(d)
 		todos.add(d)
@@ -414,7 +414,7 @@ if __name__ == '__main__':
 		cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
 		carta = Letter(cartaSprite)
 		carta.rect.x = 3950
-		carta.rect.y = height - 100
+		carta.rect.y = 500 - 100
 		letters.add(carta)
 		todos.add(carta)
 		jugadores.add(homero)
@@ -428,8 +428,8 @@ if __name__ == '__main__':
 			if nivel == 2 and entrar == True:
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
-				stewiePlayer.rect.x = width + 50
-				stewiePlayer.rect.y = height - 100
+				stewiePlayer.rect.x = width + 10
+				stewiePlayer.rect.y = 500 - 100
 				posx = -10
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
@@ -443,13 +443,13 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_LEFT:
+					elif event.key == pygame.K_l:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_DOWN:
+					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
@@ -484,7 +484,7 @@ if __name__ == '__main__':
 						done = True
 
 			#Colicion entre Homero y Donnuts
-			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)
+			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
 			for x in ls_col_donuts:
 				donuts.remove(x)
 				todos.remove(x)
@@ -537,10 +537,8 @@ if __name__ == '__main__':
 			generateAmbient()
 			todos.draw(pantalla)
 			jugadores.update()
-			if nivel == 1:
-				agents.update(homero.rect.x, homero.rect.y)
-			elif nivel == 2:
-				groupStewie.update(homero.rect.x, homero.rect.y)
+			agents.update(homero.rect.x, homero.rect.y)
+			groupStewie.update(homero.rect.x, homero.rect.y)
 			letters.update()
 			FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 20)
 			Qdonu = FuenteTitulo.render(str(quantityDonuts),True, NEGRO)

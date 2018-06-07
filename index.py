@@ -174,7 +174,7 @@ class Stewie(pygame.sprite.Sprite):
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
 
-		
+
 
 #Beer Duff class
 class beerDuff(pygame.sprite.Sprite):
@@ -184,7 +184,7 @@ class beerDuff(pygame.sprite.Sprite):
 		self.image = pygame.image.load('source/duff.png')
 		#self.image.fill([240, 39, 72])
 		self.rect = self.image.get_rect()
-		
+
 
 
 #Class of Homero Player
@@ -471,7 +471,7 @@ if __name__ == '__main__':
 						done = True
 
 			#Colicion entre Homero y Donnuts
-			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
+			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)
 			for x in ls_col_donuts:
 				donuts.remove(x)
 				todos.remove(x)
@@ -528,6 +528,11 @@ if __name__ == '__main__':
 			elif nivel == 2:
 				groupStewie.update(homero.rect.x, homero.rect.y)
 			letters.update()
+			FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 20)
+			Qdonu = FuenteTitulo.render(str(quantityDonuts),True, NEGRO)
+			donaimage=pygame.image.load('source/dona1.png').convert_alpha()
+			pantalla.blit(donaimage,[190,30])
+			pantalla.blit(Qdonu,[232,40])
 			pygame.draw.rect(pantalla, BLANCO,(8,8 ,200 ,14))
 			pygame.draw.rect(pantalla, NEGRO,(10,10 , homero.salud ,10))
 			pygame.display.flip()

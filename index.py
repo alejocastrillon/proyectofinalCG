@@ -20,11 +20,18 @@ agents = pygame.sprite.Group()
 donuts = pygame.sprite.Group()
 beers = pygame.sprite.Group()
 letters = pygame.sprite.Group()
+plataformas = pygame.sprite.Group()
 todos = pygame.sprite.Group()
 groupStewie = pygame.sprite.Group()
 imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
+
+class Plataforma(pygame.sprite.Sprite):
+    def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load('source/plataforma.png')
+		self.rect = self.image.get_rect()
 
 class Sounds():
     def __init__(self):
@@ -34,6 +41,8 @@ class Sounds():
         self.beer.set_volume(0.2)
         self.golpe = pygame.mixer.Sound(os.path.join("source/sounds/golpe.ogx"))
         self.golpe.set_volume(0.2)
+        self.donut = pygame.mixer.Sound(os.path.join("source/sounds/donut.wav"))
+        self.donut.set_volume(0.2)
 #Option Class
 class Opcion:
     def __init__(self, idop, texto, pos):
@@ -183,7 +192,7 @@ class Stewie(pygame.sprite.Sprite):
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
 
-		
+
 
 #Beer Duff class
 class beerDuff(pygame.sprite.Sprite):
@@ -193,7 +202,7 @@ class beerDuff(pygame.sprite.Sprite):
 		self.image = pygame.image.load('source/duff.png')
 		#self.image.fill([240, 39, 72])
 		self.rect = self.image.get_rect()
-		
+
 
 
 #Class of Homero Player
@@ -386,7 +395,13 @@ def positionDonuts(quantity):
 		d.rect.x = random.randrange(5, 4080, 5)
 		donuts.add(d)
 		todos.add(d)
-
+def positionPlatform(quantity):
+	for x in xrange(quantity):
+		p = Plataforma();
+		p.rect.y = random.randrange(100, 300 - 60, 5)
+		p.rect.x = random.randrange(5, 800, 5)
+		plataformas.add(p)
+		todos.add(p)
 
 def generateAmbient():
 	pantalla.blit(imagenFondo, [posx, posy])
@@ -421,6 +436,7 @@ if __name__ == '__main__':
 		todos.add(homero)
 		generateAmbient()
 		positionDonuts(20)
+		positionPlatform(2)
 		positionBeerDuff(10)
 		pygame.display.flip()
 		done = False
@@ -484,12 +500,12 @@ if __name__ == '__main__':
 						done = True
 
 			#Colicion entre Homero y Donnuts
-			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
+			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)
 			for x in ls_col_donuts:
 				donuts.remove(x)
 				todos.remove(x)
 				quantityDonuts += 1
-				print "Cantidad donuts: ", quantityDonuts
+				sounds.donut.play()
 
 			#Colicion entre Homero y las cervezas Duff
 			ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
@@ -519,6 +535,9 @@ if __name__ == '__main__':
 					x.rect.x -= 5
 				for x in letters:
 					x.rect.x -= 5
+				for x in plataformas:
+					x.rect.x -= 5
+
 
 			elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
 				posx += 5
@@ -529,6 +548,8 @@ if __name__ == '__main__':
 				for x in beers:
 					x.rect.x += 5
 				for x in letters:
+					x.rect.x += 5
+				for x in plataformas:
 					x.rect.x += 5
 
 			pantalla.fill([255, 200, 200])

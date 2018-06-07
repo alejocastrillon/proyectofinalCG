@@ -157,12 +157,13 @@ class agentEnemies(pygame.sprite.Sprite):
 	def __init__(self, matrix):
 		pygame.sprite.Sprite.__init__(self)
 		self.f = matrix
-		self.image = self.f[0][6]
+		self.image = self.f[0][0]
 		#self.image.fill([0, 0, 0])
 		self.rect = self.image.get_rect()
 		self.salud = 5
 		self.direction = 0
 		self.action = 0
+		self.index = 0
 
 	def update(self, posHomerX, posHomerY):
 		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 50:
@@ -190,6 +191,18 @@ class agentEnemies(pygame.sprite.Sprite):
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
 
+		if self.direction != 0:
+			self.image = self.f[0][self.index]
+			self.index += 1
+			if self.index >= 5:
+				self.index = 0
+
+		if self.action == 1:
+			self.image = self.f[1][self.index]
+			self.index += 1
+			if self.index >= 4:
+				self.index = 0
+
 def recortarSprite(nombreArchivo, cantidadX, cantidadY):
 	imageSprite = pygame.image.load(nombreArchivo)
 	imageInfo = imageSprite.get_rect()
@@ -206,7 +219,7 @@ def recortarSprite(nombreArchivo, cantidadX, cantidadY):
 	return matrix
 
 def agentEnemiesGenerator():
-	agenteSprite = recortarSprite('source/Espejo_AgnteNoFondo.png', 7, 19)
+	agenteSprite = recortarSprite('source/AgenteSinFondo.png', 6, 3)
 	if random.randint(0, 50) == 2:
 		agent = agentEnemies(agenteSprite)
 		agent.rect.x = 510

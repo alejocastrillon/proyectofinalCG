@@ -4,18 +4,37 @@ import pygame
 import random
 from math import *
 
-posx = 0
-posy = -10
+ROJO=[255,0,0]
+BLANCO=[255,255,255]
+NEGRO=[0,0,0]
+AMARILLO=[255,255,0]
+nivel=1
+
+pygame.init()
 size = width, height = [500, 500]
-oleadas = 0
-quantityDonuts = 0
-reloj = pygame.time.Clock()
-jugadores = pygame.sprite.Group()
-agents = pygame.sprite.Group()
-donuts = pygame.sprite.Group()
-beers = pygame.sprite.Group()
-letters = pygame.sprite.Group()
-todos = pygame.sprite.Group()
+
+class Opcion:
+    def __init__(self, idop, texto, pos):
+        self.id=idop
+        self.txt=texto
+        self.pos=pos
+        self.color_def=BLANCO
+        self.ver=False
+        self.Marco()
+        self.Dibujar()
+        self.sonido = False
+    def color_actual(self):
+        if self.ver:
+            return AMARILLO
+        else:
+            return (ROJO)
+    def Marco(self):
+        self.titulo=fuente.render(self.txt, True, self.color_actual())
+        self.rect=self.titulo.get_rect()
+        self.rect.topleft=self.pos
+    def Dibujar(self):
+        self.Marco()
+        pantalla.blit(self.titulo,self.rect)
 
 #Donut's class
 class Donut(pygame.sprite.Sprite):
@@ -40,7 +59,6 @@ class Letter(pygame.sprite.Sprite):
 		self.index += 1
 		if self.index >= 5:
 			self.index = 0
-		
 
 #Beer Duff class
 class beerDuff(pygame.sprite.Sprite):
@@ -50,8 +68,6 @@ class beerDuff(pygame.sprite.Sprite):
 		self.image = pygame.image.load('source/duff.png')
 		#self.image.fill([240, 39, 72])
 		self.rect = self.image.get_rect()
-		
-
 
 #Class of Homero Player
 class homerPlayer(pygame.sprite.Sprite):
@@ -149,8 +165,6 @@ class homerPlayer(pygame.sprite.Sprite):
 				self.index = 0
 				self.action = 0
 
-
-
 #Enemy agents class
 class agentEnemies(pygame.sprite.Sprite):
 	"""docstring for agentEnemies"""
@@ -244,133 +258,217 @@ def positionDonuts(quantity):
 		donuts.add(d)
 		todos.add(d)
 
-
 def generateAmbient():
 	pantalla.blit(imagenFondo, [posx, posy])
 
+def PantallaInicio():
+    pygame.mixer.init()
+    panta = pygame.display.set_mode([800,600])
+    pygame.mixer.music.load('source/sounds/menu.mp3')
+    pygame.mixer.music.set_volume(10)
+    pygame.mixer.music.play(-1)
+    fuente=pygame.font.Font(None,40)
+    idd=1
+    cont=0
+    fin=False
+    soni = 0
+    while not fin:
+        pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin=True
+                return 2
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for op in opciones:
+                    if op.rect.collidepoint(pos):
+                        return op.id
+                        fin = True
+
+        FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 100)
+        Titulo = FuenteTitulo.render(" Fat Agent",True, BLANCO)
+        Titulo1 = FuenteTitulo.render(" Fat Agent",True, NEGRO)
+
+        image=pygame.image.load('source/menu/menuprov.jpg').convert_alpha()
+        panta.blit(image,[0,0])
+
+        cont+=1
+        if cont<25 and cont>=15:
+            panta.blit(Titulo,[163,103])
+            panta.blit(Titulo1,[160,100])
+
+        if cont<15:
+            panta.blit(Titulo,[163,100])
+            panta.blit(Titulo1,[160,97])
+        else:
+            cont=0
+
+        opciones=[Opcion(3, "Salir", [380,450]), Opcion(1, "Empezar", [350,400]), Opcion(2, "Controles", [350,500])]
+        for op in opciones:
+            if op.rect.collidepoint(pos):
+                op.ver=True
+            else:
+                op.ver=False
+            op.Dibujar()
+
+        pygame.display.flip()
+
+def Controles():
+    panta = pygame.display.set_mode([800,600])
+    fin1=False
+    while not fin1:
+        pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                fin1=True
+        image=pygame.image.load('source/menu/tuto2.png').convert_alpha()
+        panta.blit(image,[0,0])
+        pygame.display.flip()
+
 if __name__ == '__main__':
 	pygame.init()
-	imagenFondo = pygame.image.load('source/springfield.png')
-	imagenFondoInfo = imagenFondo.get_rect()
-	imagenFondoWidth = imagenFondoInfo[2]
-	imagenFondoHeight = imagenFondoInfo[3]
 	pantalla = pygame.display.set_mode(size)
-	homeroSprite = recortarSprite('source/Finalizado_SinFondo.png', 8, 6);
-	homero = homerPlayer(homeroSprite)
-	homero.rect.x = 0
-	homero.rect.y = 400
-	cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
-	carta = Letter(cartaSprite)
-	carta.rect.x = 3950
-	carta.rect.y = height - 100
-	letters.add(carta)
-	todos.add(carta)
-	jugadores.add(homero)
-	todos.add(homero)
-	generateAmbient()
-	positionDonuts(20)
-	positionBeerDuff(10)
-	pygame.display.flip()
-	done = False
-	while not done:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				done = True
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_RIGHT:
-					homero.action = 1
-					homero.direction = 1
-				elif event.key == pygame.K_LEFT:
-					homero.action = 1
-					homero.direction = 2
-				elif event.key == pygame.K_UP:
-					homero.action = 1
-					homero.direction = 3
-				elif event.key == pygame.K_DOWN:
-					homero.action = 1
-					homero.direction = 4
-				elif event.key == pygame.K_SPACE:
-					homero.action = 1
-					homero.direction = 0
-				elif event.key == pygame.K_p:
-					homero.action = 2
-				elif event.key == pygame.K_d:
-					homero.action = 3
+	fuente=pygame.font.Font('source/menu/Simpsonfont.ttf',40)
+	a=PantallaInicio()
+	if a==1:
+		pygame.mixer.init()
+		pygame.mixer.music.set_volume(0)
+		posx = 0
+		posy = -10
+		oleadas = 0
+		quantityDonuts = 0
+		reloj = pygame.time.Clock()
+		jugadores = pygame.sprite.Group()
+		agents = pygame.sprite.Group()
+		donuts = pygame.sprite.Group()
+		beers = pygame.sprite.Group()
+		letters = pygame.sprite.Group()
+		todos = pygame.sprite.Group()
+		imagenFondo = pygame.image.load('source/springfield.png')
+		imagenFondoInfo = imagenFondo.get_rect()
+		imagenFondoWidth = imagenFondoInfo[2]
+		imagenFondoHeight = imagenFondoInfo[3]
+		pantalla = pygame.display.set_mode(size)
+		homeroSprite = recortarSprite('source/Finalizado_SinFondo.png', 8, 6);
+		homero = homerPlayer(homeroSprite)
+		homero.rect.x = 0
+		homero.rect.y = 400
+		cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
+		carta = Letter(cartaSprite)
+		carta.rect.x = 3950
+		carta.rect.y = height - 100
+		letters.add(carta)
+		todos.add(carta)
+		jugadores.add(homero)
+		todos.add(homero)
+		generateAmbient()
+		positionDonuts(20)
+		positionBeerDuff(10)
+		pygame.display.flip()
+		done = False
+		while not done:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					done = True
+				elif event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_RIGHT:
+						homero.action = 1
+						homero.direction = 1
+					elif event.key == pygame.K_LEFT:
+						homero.action = 1
+						homero.direction = 2
+					elif event.key == pygame.K_UP:
+						homero.action = 1
+						homero.direction = 3
+					elif event.key == pygame.K_DOWN:
+						homero.action = 1
+						homero.direction = 4
+					elif event.key == pygame.K_SPACE:
+						homero.action = 1
+						homero.direction = 0
+					elif event.key == pygame.K_p:
+						homero.action = 2
+					elif event.key == pygame.K_d:
+						homero.action = 3
 
-		#Colicion entre homero y algun agente, descuenta la salud de un agente si Homero esta dando un golpe
-		ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
-		for x in ls_colhomer_agents:
-			if homero.action == 2:
-				x.salud -= 1
-			if x.salud == 0:
-				agents.remove(x)
-				todos.remove(x)
-
-		#Colicion entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
-		for ae in agents:
-			ls_agente_homero = pygame.sprite.spritecollide(ae, jugadores, False)
-			for x in ls_agente_homero:
-				print "Salud Homero: ", x.salud
-				if ae.action == 1 and x.action != 3:
+			#Colicion entre homero y algun agente, descuenta la salud de un agente si Homero esta dando un golpe
+			ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
+			for x in ls_colhomer_agents:
+				if homero.action == 2:
 					x.salud -= 1
 				if x.salud == 0:
-					jugadores.remove(x)
+					agents.remove(x)
 					todos.remove(x)
-					done = True
 
-		#Colicion entre Homero y Donnuts
-		ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)	
-		for x in ls_col_donuts:
-			donuts.remove(x)
-			todos.remove(x)
-			quantityDonuts += 1
-			print "Cantidad donuts: ", quantityDonuts
+			#Colicion entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
+			for ae in agents:
+				ls_agente_homero = pygame.sprite.spritecollide(ae, jugadores, False)
+				for x in ls_agente_homero:
+					print "Salud Homero: ", x.salud
+					if ae.action == 1 and x.action != 3:
+						x.salud -= 1
+					if x.salud == 0:
+						jugadores.remove(x)
+						todos.remove(x)
+						done = True
+						nivel=0
 
-		#Colicion entre Homero y las cervezas Duff
-		ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
-		for x in ls_col_beers:
-			beers.remove(x)
-			todos.remove(x)
-			homero.salud += 3
-			print "Salud homero: ", homero.salud
+			#Colicion entre Homero y Donnuts
+			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)
+			for x in ls_col_donuts:
+				donuts.remove(x)
+				todos.remove(x)
+				quantityDonuts += 1
+				print "Cantidad donuts: ", quantityDonuts
 
-		#Colicion entre Homero y Carta
-		ls_col_letter = pygame.sprite.spritecollide(homero, letters, False)
-		for x in ls_col_letter:
-			homero.winner = True
-			print "Has ganado"
-			done = True
+			#Colicion entre Homero y las cervezas Duff
+			ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
+			for x in ls_col_beers:
+				beers.remove(x)
+				todos.remove(x)
+				homero.salud += 3
+				print "Salud homero: ", homero.salud
 
-		#Movimiento de fondo
-		if homero.direction == 1 and homero.rect.x >= width - 214 and posx >= width - imagenFondoWidth:
-			posx -= 5
-			for x in agents:
-				x.rect.x -= 5
-			for x in donuts:
-				x.rect.x -= 5
-			for x in beers:
-				x.rect.x -= 5
-			for x in letters:
-				x.rect.x -= 5
+			#Colicion entre Homero y Carta
+			ls_col_letter = pygame.sprite.spritecollide(homero, letters, False)
+			for x in ls_col_letter:
+				homero.winner = True
+				print "Has ganado"
+				done = True
 
-		elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
-			posx += 5
-			for x in agents:
-				x.rect.x += 5
-			for x in donuts:
-				x.rect.x += 5
-			for x in beers:
-				x.rect.x += 5
-			for x in letters:
-				x.rect.x += 5
+			#Movimiento de fondo
+			if homero.direction == 1 and homero.rect.x >= width - 214 and posx >= width - imagenFondoWidth:
+				posx -= 5
+				for x in agents:
+					x.rect.x -= 5
+				for x in donuts:
+					x.rect.x -= 5
+				for x in beers:
+					x.rect.x -= 5
+				for x in letters:
+					x.rect.x -= 5
 
-		pantalla.fill([255, 200, 200])
-		if homero.winner == False:
-			agentEnemiesGenerator()
-		generateAmbient()
-		todos.draw(pantalla)
-		jugadores.update()
-		agents.update(homero.rect.x, homero.rect.y)
-		letters.update()
-		pygame.display.flip()
-		reloj.tick(15)
+			elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
+				posx += 5
+				for x in agents:
+					x.rect.x += 5
+				for x in donuts:
+					x.rect.x += 5
+				for x in beers:
+					x.rect.x += 5
+				for x in letters:
+					x.rect.x += 5
+
+			pantalla.fill([255, 200, 200])
+			if homero.winner == False:
+				agentEnemiesGenerator()
+			generateAmbient()
+			todos.draw(pantalla)
+			jugadores.update()
+			agents.update(homero.rect.x, homero.rect.y)
+			letters.update()
+			pygame.draw.rect(pantalla, BLANCO,(8,8 ,200 ,14))
+        	pygame.draw.rect(pantalla, NEGRO,(10,10 , homero.salud ,10))
+        	pygame.display.flip()
+        	reloj.tick(15)
+	if a==2:
+		Controles()

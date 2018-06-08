@@ -24,6 +24,7 @@ letters = pygame.sprite.Group()
 plataformas = pygame.sprite.Group()
 todos = pygame.sprite.Group()
 groupStewie = pygame.sprite.Group()
+groupPeter = pygame.sprite.Group()
 imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
@@ -115,7 +116,7 @@ def successLevel():
 						pygame.mixer.music.stop()
 						fin = True
 					cont += 1
-		pantasha.blit(carta, [0, 0])
+		pantasha.blit(carta, [100, 25])
 		pygame.display.flip()
 
 def PantallaInicio():
@@ -210,6 +211,69 @@ class Stewie(pygame.sprite.Sprite):
 	"""docstring for Stewie"""
 	def __init__(self, matrix):
 		super(Stewie, self).__init__()
+		self.f = matrix
+		self.image = self.f[0][0]
+		self.rect = self.image.get_rect()
+		self.salud = 20
+		self.index = 0
+		self.direction = 0
+		self.action = 0
+
+	def update(self, posHomerX, posHomerY):
+		if (abs(self.rect.x - posHomerX) + 20) < (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.x - posHomerX) > 50:
+			if self.rect.x > posHomerX:
+				self.direction = 1
+			elif self.rect.x < posHomerX:
+				self.direction = 2
+		elif (abs(self.rect.x - posHomerX) + 20) > (abs(self.rect.y - posHomerY) + 20) and abs(self.rect.y - posHomerY) > 20:
+			if self.rect.y > posHomerY:
+				self.direction = 3
+			elif self.rect.y < posHomerY:
+				self.direction = 4
+		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
+			print "entro"
+			self.direction = 0
+			self.action = random.randint(0, 3)
+		if self.direction == 1:
+			self.rect.x += 5
+		elif self.direction == 2:
+			self.rect.x -= 5
+		elif self.direction == 3:
+			if self.rect.y >= 260:
+				self.rect.y -= 5
+		elif self.direction == 4:
+			if self.rect.y <= height - 60:
+				self.rect.y += 5
+
+		if self.direction != 0:
+			self.image = self.f[0][self.index]
+			self.index += 1
+			if self.index >= 4:
+				self.index = 0
+
+		if self.action == 1:
+			self.image = self.f[1][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
+		elif self.action == 2:
+			self.image = self.f[2][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
+		elif self.action == 3:
+			self.image = self.f[3][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
+
+class Peter(pygame.sprite.Sprite):
+	"""docstring for Stewie"""
+	def __init__(self, matrix):
+		super(Peter, self).__init__()
 		self.f = matrix
 		self.image = self.f[0][0]
 		self.rect = self.image.get_rect()
@@ -632,6 +696,11 @@ if __name__ == '__main__':
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
 				entrar = False
+			if nivel == 3 and entrar == True:
+				spritePeter = recortarSprite('source/PeterSinFondo.png',5,5)
+				peterPlayer = Peter(spritePeter)
+				stewiePlayer.rect.x = width -10
+				stewiePlayer.rect.y = 250
 
 
 			for event in pygame.event.get():

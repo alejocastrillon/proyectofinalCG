@@ -5,6 +5,7 @@ import random
 import os
 from math import *
 
+VERDE = [0, 200, 0]
 ROJO=[255,0,0]
 BLANCO=[255,255,255]
 NEGRO=[0,0,0]
@@ -90,7 +91,12 @@ class Opcion:
 		self.Marco()
 		pantalla.blit(self.titulo,self.rect)
 
+
 def successLevel():
+	pygame.mixer.init()
+	pygame.mixer.music.load('source/sounds/urss.mp3')
+	pygame.mixer.music.set_volume(10)
+	pygame.mixer.music.play(-1)
 	pantasha = pygame.display.set_mode(size)
 	fin = False
 	cont = 0
@@ -110,6 +116,11 @@ def successLevel():
 					elif nivel == 2 and cont == 0:
 						carta = pygame.image.load('source/c4.png')
 					elif cont == 1:
+						carta = pygame.image.load('source/nivelsiguiente'+str(nivel)+'.png')
+					cont += 1
+				elif event.key == pygame.K_RETURN:
+					if cont == 2:
+						pygame.mixer.music.stop()
 						fin = True
 					cont += 1
 		pantasha.blit(carta, [0, 0])
@@ -210,6 +221,7 @@ class Stewie(pygame.sprite.Sprite):
 		self.f = matrix
 		self.image = self.f[0][0]
 		self.rect = self.image.get_rect()
+		self.salud = 20
 		self.index = 0
 		self.direction = 0
 		self.action = 0
@@ -228,7 +240,7 @@ class Stewie(pygame.sprite.Sprite):
 		elif abs(self.rect.x - posHomerX) <= 20 and abs(self.rect.y - posHomerY) <= 20:
 			print "entro"
 			self.direction = 0
-			self.action = 1
+			self.action = random.randint(0, 3)
 		if self.direction == 1:
 			self.rect.x += 5
 		elif self.direction == 2:
@@ -248,6 +260,18 @@ class Stewie(pygame.sprite.Sprite):
 
 		if self.action == 1:
 			self.image = self.f[1][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
+		elif self.action == 2:
+			self.image = self.f[2][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
+		elif self.action == 3:
+			self.image = self.f[3][self.index]
 			self.index += 1
 			if self.index >= 3:
 				self.index = 0
@@ -274,7 +298,7 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.matrix = matrix
 		self.image = self.matrix[0][0]
 		self.rect = self.image.get_rect()
-		self.salud = 100
+		self.salud = 10
 		self.direction = 0
 		self.winner = False
 		self.action = 0
@@ -635,16 +659,17 @@ if __name__ == '__main__':
 					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
-					#elif event.key == pygame.K_SPACE:
-						#homero.Salto()
-						#homero.gravedad()
-						#homero.direction = 0
+
+					elif event.key == pygame.K_SPACE:
+						homero.Salto()
+						homero.gravedad()
+						homero.direction = 0
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:
 						homero.action = 3
 
-			#Colicion entre homero y algun agente, descuenta la salud de un agente si Homero esta dando un golpe
+			#Colision entre homero y algun agente, descuenta la salud de un agente si Homero esta dando un golpe
 			ls_colhomer_agents= pygame.sprite.spritecollide(homero, agents, False)
 			for x in ls_colhomer_agents:
 				if homero.action == 2:
@@ -654,7 +679,24 @@ if __name__ == '__main__':
 					agents.remove(x)
 					todos.remove(x)
 
-			#Colicion entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
+			#Colision entre homero y stewie
+			ls_colhomer_stewie = pygame.sprite.spritecollide(homero, groupStewie, False)
+			for x in ls_colhomer_stewie:
+				if homero.action == 2:
+					x.salud -= 1
+					sounds.golpe.play()
+				if x.salud == 0:
+					groupStewie.remove(x)
+					todos.remove(x)
+				if x.action != 0 and homero.action != 3:
+					homero.salud -= 1
+					sounds.herido.play()
+				if homero.salud == 0:
+					jugadores.remove(homero)
+					todos.remove(homero)
+					done = True
+
+			#Colision entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
 			for ae in agents:
 				ls_agente_homero = pygame.sprite.spritecollide(ae, jugadores, False)
 				for x in ls_agente_homero:
@@ -667,7 +709,7 @@ if __name__ == '__main__':
 						todos.remove(x)
 						done = True
 
-			#Colicion entre Homero y Donnuts
+			#Colision entre Homero y Donnuts
 			ls_col_donuts = pygame.sprite.spritecollide(homero, donuts, True)
 			for x in ls_col_donuts:
 				donuts.remove(x)
@@ -675,16 +717,19 @@ if __name__ == '__main__':
 				quantityDonuts += 1
 				sounds.donut.play()
 
-			#Colicion entre Homero y las cervezas Duff
+			#Colision entre Homero y las cervezas Duff
 			ls_col_beers = pygame.sprite.spritecollide(homero, beers, True)
 			for x in ls_col_beers:
 				beers.remove(x)
 				todos.remove(x)
-				homero.salud += 3
+				if homero.salud <= 7:
+					homero.salud += 3
+				else:
+					homero.salud += 10 - homero.salud
 				print "Salud homero: ", homero.salud
 				sounds.beer.play()
 
-			#Colicion entre Homero y Carta
+			#Colision entre Homero y Carta
 			ls_col_letter = pygame.sprite.spritecollide(homero, letters, True)
 			for x in ls_col_letter:
 				homero.winner = True
@@ -743,7 +788,10 @@ if __name__ == '__main__':
 			pantalla.blit(donaimage,[10,30])
 			pantalla.blit(Qdonu,[50,40])
 			pygame.draw.rect(pantalla, BLANCO,(8,8 ,200 ,14))
-			pygame.draw.rect(pantalla, NEGRO,(10,10 , homero.salud ,10))
+			if homero.salud >= 5:
+				pygame.draw.rect(pantalla, VERDE,(10,10 , homero.salud * 19.2 ,10))
+			else:
+				pygame.draw.rect(pantalla, ROJO,(10,10 , homero.salud * 19.2 ,10))
 			pygame.display.flip()
 			reloj.tick(15)
 	elif a == 2:

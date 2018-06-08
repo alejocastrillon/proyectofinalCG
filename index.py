@@ -706,6 +706,8 @@ if __name__ == '__main__':
 				peterPlayer = Peter(spritePeter)
 				stewiePlayer.rect.x = width -10
 				stewiePlayer.rect.y = 250
+				positionDonuts(20)
+				positionBeerDuff(10)
 				entrar = False
 				generateOtherLevels = True
 

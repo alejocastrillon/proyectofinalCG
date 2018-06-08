@@ -27,12 +27,14 @@ imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
 
+#Platform class
 class Plataforma(pygame.sprite.Sprite):
     def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load('source/plataforma.png')
 		self.rect = self.image.get_rect()
 
+#Sound class
 class Sounds():
     def __init__(self):
         self.herido = pygame.mixer.Sound(os.path.join("source/sounds/doh.wav"))
@@ -43,6 +45,7 @@ class Sounds():
         self.golpe.set_volume(0.2)
         self.donut = pygame.mixer.Sound(os.path.join("source/sounds/donut.wav"))
         self.donut.set_volume(0.2)
+
 #Option Class
 class Opcion:
     def __init__(self, idop, texto, pos):
@@ -218,13 +221,46 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.winner = False
 		self.action = 0
 		self.index = 0
+		self.saltar=0
+		self.var_y=0
 
 	'''Acciones
 		1. Caminar
 		2. Puno
 		3. Defenderse '''
 
+	def Salto(self):
+		if self.salud > 0:
+			if self.saltar==0:
+				self.saltar=1
+				self.var_y = -8
+	def gravedad(self):
+		if self.salud>0:
+			if self.var_y==0:
+				self.var_y=1
+				self.saltar=0
+			else:
+				self.var_y+=0.25
+
+			if self.var_y < 0:
+				salto=pygame.image.load("source/41-1.png")
+				self.image = salto
+			if self.var_y > 2:
+				salto=pygame.image.load("source/41-4.png")
+				self.image = salto
+
+
 	def update(self):
+        #salto
+		self.rect.y+=self.var_y
+        ##Colision con plataformas
+		l_col=pygame.sprite.spritecollide(self,plataformas,False)
+		for m in l_col:
+			if self.var_y > 0:
+				self.rect.bottom = m.rect.top
+				self.var_y = 0
+
+
 		if self.direction == 1 and self.action == 1:
 			if self.rect.x <= width - 214:
 				self.rect.x += 5
@@ -395,6 +431,7 @@ def positionDonuts(quantity):
 		d.rect.x = random.randrange(5, 4080, 5)
 		donuts.add(d)
 		todos.add(d)
+
 def positionPlatform(quantity):
 	for x in xrange(quantity):
 		p = Plataforma();
@@ -469,7 +506,8 @@ if __name__ == '__main__':
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
-						homero.action = 1
+						homero.Salto()
+						homero.gravedad()
 						homero.direction = 0
 					elif event.key == pygame.K_p:
 						homero.action = 2

@@ -71,6 +71,31 @@ class Opcion:
         self.Marco()
         pantalla.blit(self.titulo,self.rect)
 
+def successLevel():
+	pantasha = pygame.display.set_mode(size)
+	fin = False
+	cont = 0
+	if nivel == 1:
+		carta = pygame.image.load('source/c1.png')
+	elif nivel == 2:
+		carta = pygame.image.load('source/c3.png')
+
+	while not fin:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				fin = True
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_RIGHT:
+					if nivel == 1 and cont == 0:
+						carta = pygame.image.load('source/c2.png')
+					elif nivel == 2 and cont == 0:
+						carta = pygame.image.load('source/c4.png')
+					elif cont == 1:
+						fin = True
+					cont += 1
+		pantasha.blit(carta, [0, 0])
+		pygame.display.flip()
+
 def PantallaInicio():
     pygame.mixer.init()
     panta = pygame.display.set_mode(size)
@@ -195,6 +220,19 @@ class Stewie(pygame.sprite.Sprite):
 		elif self.direction == 4:
 			if self.rect.y <= height - 60:
 				self.rect.y += 5
+
+		if self.direction != 0:
+			self.image = self.f[0][self.index]
+			self.index += 1
+			if self.index >= 4:
+				self.index = 0
+
+		if self.action == 1:
+			self.image = self.f[1][self.index]
+			self.index += 1
+			if self.index >= 3:
+				self.index = 0
+				self.action = 0
 
 
 
@@ -392,6 +430,7 @@ class agentEnemies(pygame.sprite.Sprite):
 			self.index += 1
 			if self.index >= 4:
 				self.index = 0
+				self.action = 0
 
 def recortarSprite(nombreArchivo, cantidadX, cantidadY):
 	imageSprite = pygame.image.load(nombreArchivo)
@@ -493,8 +532,8 @@ if __name__ == '__main__':
 			if nivel == 2 and entrar == True:
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
-				stewiePlayer.rect.x = width + 10
-				stewiePlayer.rect.y = 500 - 100
+				stewiePlayer.rect.x = width -10
+				stewiePlayer.rect.y = 250
 				posx = -10
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
@@ -518,9 +557,15 @@ if __name__ == '__main__':
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
+<<<<<<< HEAD
 						'''homero.Salto()
 						homero.gravedad()
 						homero.direction = 0'''
+=======
+						#homero.Salto()
+						#homero.gravedad()
+						homero.direction = 0
+>>>>>>> 29f870bbd8f88820994b9e799de429a18d7ab1bf
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:
@@ -567,10 +612,13 @@ if __name__ == '__main__':
 				sounds.beer.play()
 
 			#Colicion entre Homero y Carta
-			ls_col_letter = pygame.sprite.spritecollide(homero, letters, False)
+			ls_col_letter = pygame.sprite.spritecollide(homero, letters, True)
 			for x in ls_col_letter:
 				homero.winner = True
+				letters.remove(x)
+				todos.remove(x)
 				print "Has ganado"
+				successLevel()
 				nivel += 1
 				entrar = True
 
@@ -588,6 +636,8 @@ if __name__ == '__main__':
 					x.rect.x -= 5
 				for x in plataformas:
 					x.rect.x -= 5
+				for x in groupStewie:
+					x.rect.x -= 5
 
 
 			elif homero.direction == 2 and homero.rect.x < 30 and posx < 0:
@@ -601,6 +651,8 @@ if __name__ == '__main__':
 				for x in letters:
 					x.rect.x += 5
 				for x in plataformas:
+					x.rect.x += 5
+				for x in groupStewie:
 					x.rect.x += 5
 
 			pantalla.fill([255, 200, 200])

@@ -27,19 +27,11 @@ groupStewie = pygame.sprite.Group()
 imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
+gameover = pygame.image.load('source/perdido.png')
+win = pygame.image.load('source/hasganado.png')
 
 #seccion para cargar imagenes y sonidos para introduccion
 
-intro1 = pygame.image.load('source/video/1.png')
-intro2 = pygame.image.load('source/video/2.png')
-intro3 = pygame.image.load('source/video/6.png')
-intro4 = pygame.image.load('source/video/3.png')
-intro5 = pygame.image.load('source/video/4.png')
-intro6 = pygame.image.load('source/video/5.png')
-pygame.mixer.init(44100, -16, 2, 2048)
-music1 = pygame.mixer.Sound('source/video/sound1.mp3')
-music2 = pygame.mixer.Sound('source/video/sound2.mp3')
-music3 = pygame.mixer.Sound('source/video/sound3.mp3')
 
 
 #Platform class
@@ -540,7 +532,7 @@ def videoInt():
 	screen = pygame.display.set_mode(size)
 	done = False
 	picture = 0
-	music1.play()
+	#music1.play()
 	while not done:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -552,8 +544,6 @@ def videoInt():
 						sonido.music2.play()
 					elif picture == 4:
 						sonido.music3.play()
-
-
 
 		if picture == 0:
 			screen.fill([0,0,0])
@@ -596,6 +586,7 @@ def videoInt():
 
 if __name__ == '__main__':
 	pygame.init()
+	fin_juego = False
 	pantalla = pygame.display.set_mode(size)
 	fuente=pygame.font.Font('source/menu/Simpsonfont.ttf',40)
 	a = PantallaInicio()
@@ -627,7 +618,7 @@ if __name__ == '__main__':
 		positionDonuts(20)
 		positionPlatform(2)
 		positionBeerDuff(10)
-
+		done2=False
 		pygame.display.flip()
 		done = False
 		while not done:
@@ -706,6 +697,7 @@ if __name__ == '__main__':
 					if x.salud == 0:
 						jugadores.remove(x)
 						todos.remove(x)
+						fin_juego = True
 						done = True
 
 			#Colision entre Homero y Donnuts
@@ -793,5 +785,14 @@ if __name__ == '__main__':
 				pygame.draw.rect(pantalla, ROJO,(10,10 , homero.salud * 19.2 ,10))
 			pygame.display.flip()
 			reloj.tick(15)
+		while not done2:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					done2 = True
+			if fin_juego:
+				pantalla.fill([0,0,0])
+				pantalla.blit(gameover,[100,25])
+			pygame.display.flip()
+
 	elif a == 2:
 		Controles()

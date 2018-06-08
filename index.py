@@ -658,7 +658,7 @@ if __name__ == '__main__':
 		videoInt()
 		pygame.mixer.music.stop()
 		sounds=Sounds()
-		pygame.mixer.init()
+		pygame.mixer.init()	
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
 		pantalla = pygame.display.set_mode(size)
@@ -680,9 +680,11 @@ if __name__ == '__main__':
 		todos.add(homero)
 		generateAmbient()
 		positionDonuts(20)
-		positionPlatform(2)
+		#positionPlatform(2)
 		positionBeerDuff(10)
+		generateOtherLevels = False
 		done2=False
+		quantitySte = 0
 		pygame.display.flip()
 		done = False
 		while not done:
@@ -691,17 +693,21 @@ if __name__ == '__main__':
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
 				stewiePlayer.rect.x = width -10
-				stewiePlayer.rect.y = 250
+				stewiePlayer.rect.y = random.randrange(260, 500 - 60, 5)
 				posx = -10
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
+				positionDonuts(20)
+				positionBeerDuff(10)
 				entrar = False
+				generateOtherLevels = True
 			if nivel == 3 and entrar == True:
 				spritePeter = recortarSprite('source/PeterSinFondo.png',5,5)
 				peterPlayer = Peter(spritePeter)
 				stewiePlayer.rect.x = width -10
 				stewiePlayer.rect.y = 250
-
+				entrar = False
+				generateOtherLevels = True
 
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -710,13 +716,13 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_LEFT:
+					elif event.key == pygame.K_l:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_DOWN:
+					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
@@ -747,12 +753,29 @@ if __name__ == '__main__':
 				if x.salud == 0:
 					groupStewie.remove(x)
 					todos.remove(x)
-				if x.action != 0 and homero.action != 3:
+					if quantitySte > 0:
+						spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
+						stewiePlayer = Stewie(spriteStewie)
+						stewiePlayer.rect.x = width -10
+						stewiePlayer.rect.y = 250
+						groupStewie.add(stewiePlayer)
+						todos.add(stewiePlayer)
+						quantitySte -= 1
+					elif quantitySte == 0:
+						print "Entro"
+						cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
+						carta = Letter(cartaSprite)
+						carta.rect.x = width - 10
+						carta.rect.y = 500 - 100
+						letters.add(carta)
+						todos.add(carta)
+				if x.action != 0 and x.index == 2 and homero.action != 3:
 					homero.salud -= 1
 					sounds.herido.play()
 				if homero.salud == 0:
 					jugadores.remove(homero)
 					todos.remove(homero)
+					fin_juego = True
 					done = True
 
 			#Colision entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
@@ -798,6 +821,7 @@ if __name__ == '__main__':
 				print "Has ganado"
 				successLevel()
 				nivel += 1
+				generateOtherLevels = False
 				entrar = True
 
 
@@ -852,6 +876,13 @@ if __name__ == '__main__':
 				pygame.draw.rect(pantalla, VERDE,(10,10 , homero.salud * 19.2 ,10))
 			else:
 				pygame.draw.rect(pantalla, ROJO,(10,10 , homero.salud * 19.2 ,10))
+
+			if nivel == 2 and generateOtherLevels:
+				pygame.draw.rect(pantalla, BLANCO,(width - 190,8 , width - 10 ,14))
+				if stewiePlayer.salud >= 10:
+					pygame.draw.rect(pantalla, VERDE, (width -200, 10, stewiePlayer.salud * (19.2 / 2), 10))
+				else:
+					pygame.draw.rect(pantalla, ROJO, (width -200, 10, stewiePlayer.salud * (19.2 / 2), 10))
 			pygame.display.flip()
 			reloj.tick(15)
 		while not done2:

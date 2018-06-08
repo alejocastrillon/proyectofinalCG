@@ -627,6 +627,7 @@ if __name__ == '__main__':
 		positionDonuts(20)
 		positionPlatform(2)
 		positionBeerDuff(10)
+		generateOtherLevels = False
 
 		pygame.display.flip()
 		done = False
@@ -641,6 +642,7 @@ if __name__ == '__main__':
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
 				entrar = False
+				generateOtherLevels = True
 
 
 			for event in pygame.event.get():
@@ -650,13 +652,13 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_LEFT:
+					elif event.key == pygame.K_l:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_DOWN:
+					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
 
@@ -688,6 +690,10 @@ if __name__ == '__main__':
 				if x.salud == 0:
 					groupStewie.remove(x)
 					todos.remove(x)
+					successLevel()
+					generateOtherLevels = False
+					nivel += 1
+					entrar = True
 				if x.action != 0 and homero.action != 3:
 					homero.salud -= 1
 					sounds.herido.play()
@@ -792,6 +798,11 @@ if __name__ == '__main__':
 				pygame.draw.rect(pantalla, VERDE,(10,10 , homero.salud * 19.2 ,10))
 			else:
 				pygame.draw.rect(pantalla, ROJO,(10,10 , homero.salud * 19.2 ,10))
+
+			if nivel == 2 and generateOtherLevels:
+				pygame.draw.rect(pantalla, BLANCO,(width - 198,8 , width - 2 ,14))
+				if stewiePlayer.salud >= 10:
+					pygame.draw.rect(pantalla, VERDE, (width -200, 10, stewiePlayer.salud * (19.2 / 2), 10))
 			pygame.display.flip()
 			reloj.tick(15)
 	elif a == 2:

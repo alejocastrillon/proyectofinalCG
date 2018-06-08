@@ -27,49 +27,68 @@ imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
 
+#seccion para cargar imagenes y sonidos para introduccion
+
+intro1 = pygame.image.load('source/video/1.png')
+intro2 = pygame.image.load('source/video/2.png')
+intro3 = pygame.image.load('source/video/6.png')
+intro4 = pygame.image.load('source/video/3.png')
+intro5 = pygame.image.load('source/video/4.png')
+intro6 = pygame.image.load('source/video/5.png')
+pygame.mixer.init(44100, -16, 2, 2048)
+music1 = pygame.mixer.Sound('source/video/sound1.mp3')
+music2 = pygame.mixer.Sound('source/video/sound2.mp3')
+music3 = pygame.mixer.Sound('source/video/sound3.mp3')
+
 
 #Platform class
 class Plataforma(pygame.sprite.Sprite):
-    def __init__(self):
+	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load('source/plataforma.png')
 		self.rect = self.image.get_rect()
 
 #Sound class
 class Sounds():
-    def __init__(self):
-        self.herido = pygame.mixer.Sound(os.path.join("source/sounds/doh.wav"))
-        self.herido.set_volume(0.1)
-        self.beer = pygame.mixer.Sound(os.path.join("source/sounds/beer11.wav"))
-        self.beer.set_volume(0.2)
-        self.golpe = pygame.mixer.Sound(os.path.join("source/sounds/golpe.ogx"))
-        self.golpe.set_volume(0.2)
-        self.donut = pygame.mixer.Sound(os.path.join("source/sounds/donut.wav"))
-        self.donut.set_volume(0.2)
+	def __init__(self):
+		self.herido = pygame.mixer.Sound(os.path.join("source/sounds/doh.wav"))
+		self.herido.set_volume(0.1)
+		self.beer = pygame.mixer.Sound(os.path.join("source/sounds/beer11.wav"))
+		self.beer.set_volume(0.2)
+		self.golpe = pygame.mixer.Sound(os.path.join("source/sounds/golpe.ogx"))
+		self.golpe.set_volume(0.2)
+		self.donut = pygame.mixer.Sound(os.path.join("source/sounds/donut.wav"))
+		self.donut.set_volume(0.2)
+		self.music1 = pygame.mixer.Sound(os.path.join('source/video/sound1.mp3'))
+		self.music1.set_volume(1.0)
+		self.music2 = pygame.mixer.Sound(os.path.join('source/video/sound2.mp3'))
+		self.music2.set_volume(1.0)
+		self.music3 = pygame.mixer.Sound(os.path.join('source/video/sound3.mp3'))
+		self.music3 .set_volume(1.0)
 
 #Option Class
 class Opcion:
-    def __init__(self, idop, texto, pos):
-        self.id=idop
-        self.txt=texto
-        self.pos=pos
-        self.color_def=BLANCO
-        self.ver=False
-        self.Marco()
-        self.Dibujar()
-        self.sonido = False
-    def color_actual(self):
-        if self.ver:
-            return AMARILLO
-        else:
-            return (ROJO)
-    def Marco(self):
-        self.titulo=fuente.render(self.txt, True, self.color_actual())
-        self.rect=self.titulo.get_rect()
-        self.rect.topleft=self.pos
-    def Dibujar(self):
-        self.Marco()
-        pantalla.blit(self.titulo,self.rect)
+	def __init__(self, idop, texto, pos):
+		self.id=idop
+		self.txt=texto
+		self.pos=pos
+		self.color_def=BLANCO
+		self.ver=False
+		self.Marco()
+		self.Dibujar()
+		self.sonido = False
+	def color_actual(self):
+		if self.ver:
+			return AMARILLO
+		else:
+			return (ROJO)
+	def Marco(self):
+		self.titulo=fuente.render(self.txt, True, self.color_actual())
+		self.rect=self.titulo.get_rect()
+		self.rect.topleft=self.pos
+	def Dibujar(self):
+		self.Marco()
+		pantalla.blit(self.titulo,self.rect)
 
 def successLevel():
 	pantasha = pygame.display.set_mode(size)
@@ -97,67 +116,67 @@ def successLevel():
 		pygame.display.flip()
 
 def PantallaInicio():
-    pygame.mixer.init()
-    panta = pygame.display.set_mode(size)
-    pygame.mixer.music.load('source/sounds/menu.mp3')
-    pygame.mixer.music.set_volume(10)
-    pygame.mixer.music.play(-1)
-    fuente=pygame.font.Font(None,40)
-    idd=1
-    cont=0
-    fin=False
-    soni = 0
-    while not fin:
-        pos = pygame.mouse.get_pos()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                fin=True
-                return 2
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for op in opciones:
-                    if op.rect.collidepoint(pos):
-                        return op.id
-                        fin = True
+	pygame.mixer.init()
+	panta = pygame.display.set_mode(size)
+	pygame.mixer.music.load('source/sounds/menu.mp3')
+	pygame.mixer.music.set_volume(10)
+	pygame.mixer.music.play(-1)
+	fuente=pygame.font.Font(None,40)
+	idd=1
+	cont=0
+	fin=False
+	soni = 0
+	while not fin:
+		pos = pygame.mouse.get_pos()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				fin=True
+				return 2
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				for op in opciones:
+					if op.rect.collidepoint(pos):
+						return op.id
+						fin = True
 
-        FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 100)
-        Titulo = FuenteTitulo.render(" Fat Agent",True, BLANCO)
-        Titulo1 = FuenteTitulo.render(" Fat Agent",True, NEGRO)
+		FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 100)
+		Titulo = FuenteTitulo.render(" Fat Agent",True, BLANCO)
+		Titulo1 = FuenteTitulo.render(" Fat Agent",True, NEGRO)
 
-        image=pygame.image.load('source/menu/menuprov.jpg').convert_alpha()
-        panta.blit(image,[0,0])
+		image=pygame.image.load('source/menu/menuprov.jpg').convert_alpha()
+		panta.blit(image,[0,0])
 
-        cont+=1
-        if cont<25 and cont>=15:
-            panta.blit(Titulo,[163,103])
-            panta.blit(Titulo1,[160,100])
+		cont+=1
+		if cont<25 and cont>=15:
+			panta.blit(Titulo,[163,103])
+			panta.blit(Titulo1,[160,100])
 
-        if cont<15:
-            panta.blit(Titulo,[163,100])
-            panta.blit(Titulo1,[160,97])
-        else:
-            cont=0
+		if cont<15:
+			panta.blit(Titulo,[163,100])
+			panta.blit(Titulo1,[160,97])
+		else:
+			cont=0
 
-        opciones=[Opcion(3, "Salir", [380,450]), Opcion(1, "Empezar", [350,400]), Opcion(2, "Controles", [350,500])]
-        for op in opciones:
-            if op.rect.collidepoint(pos):
-                op.ver=True
-            else:
-                op.ver=False
-            op.Dibujar()
+		opciones=[Opcion(3, "Salir", [380,450]), Opcion(1, "Empezar", [350,400]), Opcion(2, "Controles", [350,500])]
+		for op in opciones:
+			if op.rect.collidepoint(pos):
+				op.ver=True
+			else:
+				op.ver=False
+			op.Dibujar()
 
-        pygame.display.flip()
+		pygame.display.flip()
 
 def Controles():
-    panta = pygame.display.set_mode([800,600])
-    fin1=False
-    while not fin1:
-        pos = pygame.mouse.get_pos()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                fin1=True
-        image=pygame.image.load('source/menu/tuto2.png').convert_alpha()
-        panta.blit(image,[0,0])
-        pygame.display.flip()
+	panta = pygame.display.set_mode([800,600])
+	fin1=False
+	while not fin1:
+		pos = pygame.mouse.get_pos()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				fin1=True
+		image=pygame.image.load('source/menu/tuto2.png').convert_alpha()
+		panta.blit(image,[0,0])
+		pygame.display.flip()
 
 
 #Donut's class
@@ -291,9 +310,9 @@ class homerPlayer(pygame.sprite.Sprite):
 
 
 	def update(self):
-        #salto
+		#salto
 		self.rect.y+=self.var_y
-        ##Colision con plataformas
+		##Colision con plataformas
 		l_col=pygame.sprite.spritecollide(self,plataformas,False)
 		for m in l_col:
 			if self.var_y > 0:
@@ -486,7 +505,67 @@ def generateAmbient():
 
 
 def videoInt():
+	intro1 = pygame.image.load('source/video/1.png')
+	intro2 = pygame.image.load('source/video/2.png')
+	intro3 = pygame.image.load('source/video/6.png')
+	intro4 = pygame.image.load('source/video/3.png')
+	intro5 = pygame.image.load('source/video/4.png')
+	intro6 = pygame.image.load('source/video/5.png')
+	sonido = Sounds()
+	pygame.mixer.init(44100, -16, 2, 2048)
+	screen = pygame.display.set_mode(size)
 	done = False
+	picture = 0
+	music1.play()
+	while not done:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+					done = True
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_RIGHT:
+					picture+=1
+					if picture == 3:
+						sonido.music2.play()
+					elif picture == 4:
+						sonido.music3.play()
+
+
+
+		if picture == 0:
+			screen.fill([0,0,0])
+			screen.blit(intro1,[100,50])
+			pygame.display.flip()
+		elif picture == 1:
+			screen.fill([0,0,0])
+			screen.blit(intro2,[100,50])
+			pygame.display.flip()
+		elif picture == 2:
+			screen.fill([0,0,0])
+			screen.blit(intro3,[100,50])
+			pygame.display.flip()
+		elif picture == 3:
+			
+			screen.fill([0,0,0])
+			screen.blit(intro4,[100,50])
+			pygame.display.flip()
+		elif picture == 4:
+			screen.fill([0,0,0])
+			screen.blit(intro5,[100,50])
+			pygame.display.flip()
+		elif picture == 5:
+			screen.fill([0,0,0])
+			screen.blit(intro6,[100,50])
+			pygame.display.flip()
+		elif picture == 6:
+			done = True
+		pygame.display.flip()
+
+
+
+		
+
+
+
 	
 
 
@@ -497,9 +576,9 @@ if __name__ == '__main__':
 	fuente=pygame.font.Font('source/menu/Simpsonfont.ttf',40)
 	a = PantallaInicio()
 	if a == 1:
-		sounds=Sounds()
-		pygame.mixer.music.stop()
 		videoInt()
+		pygame.mixer.music.stop()
+		sounds=Sounds()
 		pygame.mixer.init()
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
@@ -556,16 +635,10 @@ if __name__ == '__main__':
 					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
-					elif event.key == pygame.K_SPACE:
-<<<<<<< HEAD
-						'''homero.Salto()
-						homero.gravedad()
-						homero.direction = 0'''
-=======
+					#elif event.key == pygame.K_SPACE:
 						#homero.Salto()
 						#homero.gravedad()
-						homero.direction = 0
->>>>>>> 29f870bbd8f88820994b9e799de429a18d7ab1bf
+						#homero.direction = 0
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:

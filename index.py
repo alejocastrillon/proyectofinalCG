@@ -5,6 +5,7 @@ import random
 import os
 from math import *
 
+
 ROJO=[255,0,0]
 BLANCO=[255,255,255]
 NEGRO=[0,0,0]
@@ -70,7 +71,12 @@ class Opcion:
         self.Marco()
         pantalla.blit(self.titulo,self.rect)
 
+
 def successLevel():
+	pygame.mixer.init()
+	pygame.mixer.music.load('source/sounds/urss.mp3')
+	pygame.mixer.music.set_volume(10)
+	pygame.mixer.music.play(-1)
 	pantasha = pygame.display.set_mode(size)
 	fin = False
 	cont = 0
@@ -90,6 +96,7 @@ def successLevel():
 					elif nivel == 2 and cont == 0:
 						carta = pygame.image.load('source/c4.png')
 					elif cont == 1:
+						pygame.mixer.music.stop()
 						fin = True
 					cont += 1
 		pantasha.blit(carta, [0, 0])

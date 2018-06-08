@@ -658,7 +658,7 @@ if __name__ == '__main__':
 		videoInt()
 		pygame.mixer.music.stop()
 		sounds=Sounds()
-		pygame.mixer.init()
+		pygame.mixer.init()	
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
 		pantalla = pygame.display.set_mode(size)

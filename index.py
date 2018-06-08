@@ -1,5 +1,5 @@
 #Final project
-
+import sys
 import pygame
 import random
 import os
@@ -26,6 +26,7 @@ groupStewie = pygame.sprite.Group()
 imagenFondo = pygame.image.load('source/springfield.png')
 nivel = 1
 entrar = False
+
 
 #Platform class
 class Plataforma(pygame.sprite.Sprite):
@@ -216,7 +217,7 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.matrix = matrix
 		self.image = self.matrix[0][0]
 		self.rect = self.image.get_rect()
-		self.salud = 10
+		self.salud = 100
 		self.direction = 0
 		self.winner = False
 		self.action = 0
@@ -234,6 +235,7 @@ class homerPlayer(pygame.sprite.Sprite):
 			if self.saltar==0:
 				self.saltar=1
 				self.var_y = -8
+
 	def gravedad(self):
 		if self.salud>0:
 			if self.var_y==0:
@@ -443,6 +445,13 @@ def positionPlatform(quantity):
 def generateAmbient():
 	pantalla.blit(imagenFondo, [posx, posy])
 
+
+def videoInt():
+	done = False
+	
+
+
+
 if __name__ == '__main__':
 	pygame.init()
 	pantalla = pygame.display.set_mode(size)
@@ -451,6 +460,7 @@ if __name__ == '__main__':
 	if a == 1:
 		sounds=Sounds()
 		pygame.mixer.music.stop()
+		videoInt()
 		pygame.mixer.init()
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
@@ -475,9 +485,11 @@ if __name__ == '__main__':
 		positionDonuts(20)
 		positionPlatform(2)
 		positionBeerDuff(10)
+
 		pygame.display.flip()
 		done = False
 		while not done:
+
 			if nivel == 2 and entrar == True:
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
@@ -506,9 +518,9 @@ if __name__ == '__main__':
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
-						homero.Salto()
+						'''homero.Salto()
 						homero.gravedad()
-						homero.direction = 0
+						homero.direction = 0'''
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:
@@ -561,6 +573,7 @@ if __name__ == '__main__':
 				print "Has ganado"
 				nivel += 1
 				entrar = True
+
 
 			#Movimiento de fondo
 			if homero.direction == 1 and homero.rect.x >= width - 214 and posx >= width - imagenFondoWidth:

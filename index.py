@@ -277,7 +277,7 @@ class Peter(pygame.sprite.Sprite):
 		self.f = matrix
 		self.image = self.f[0][0]
 		self.rect = self.image.get_rect()
-		self.salud = 20
+		self.salud = 60
 		self.index = 0
 		self.direction = 0
 		self.action = 0
@@ -311,25 +311,25 @@ class Peter(pygame.sprite.Sprite):
 		if self.direction != 0:
 			self.image = self.f[0][self.index]
 			self.index += 1
-			if self.index >= 4:
+			if self.index >= 5:
 				self.index = 0
 
 		if self.action == 1:
-			self.image = self.f[1][self.index]
+			self.image = self.f[2][self.index]
 			self.index += 1
-			if self.index >= 3:
+			if self.index >= 4:
 				self.index = 0
 				self.action = 0
 		elif self.action == 2:
-			self.image = self.f[2][self.index]
+			self.image = self.f[3][self.index]
 			self.index += 1
 			if self.index >= 3:
 				self.index = 0
 				self.action = 0
 		elif self.action == 3:
-			self.image = self.f[3][self.index]
+			self.image = self.f[4][self.index]
 			self.index += 1
-			if self.index >= 3:
+			if self.index >= 4:
 				self.index = 0
 				self.action = 0
 
@@ -658,7 +658,7 @@ if __name__ == '__main__':
 		videoInt()
 		pygame.mixer.music.stop()
 		sounds=Sounds()
-		pygame.mixer.init()	
+		pygame.mixer.init()
 		pygame.mixer.music.set_volume(0)
 		size = width, heigth = [800, 500]
 		pantalla = pygame.display.set_mode(size)
@@ -680,12 +680,11 @@ if __name__ == '__main__':
 		todos.add(homero)
 		generateAmbient()
 		positionDonuts(20)
-		#positionPlatform(2)
+		positionPlatform(2)
 		positionBeerDuff(10)
-		generateOtherLevels = False
 		done2=False
-		quantitySte = 0
 		pygame.display.flip()
+		continuar = True
 		done = False
 		while not done:
 
@@ -693,21 +692,20 @@ if __name__ == '__main__':
 				spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
 				stewiePlayer = Stewie(spriteStewie)
 				stewiePlayer.rect.x = width -10
-				stewiePlayer.rect.y = random.randrange(260, 500 - 60, 5)
+				stewiePlayer.rect.y = 250
 				posx = -10
 				groupStewie.add(stewiePlayer)
 				todos.add(stewiePlayer)
-				positionDonuts(20)
-				positionBeerDuff(10)
 				entrar = False
-				generateOtherLevels = True
 			if nivel == 3 and entrar == True:
 				spritePeter = recortarSprite('source/PeterSinFondo.png',5,5)
 				peterPlayer = Peter(spritePeter)
-				stewiePlayer.rect.x = width -10
-				stewiePlayer.rect.y = 250
-				entrar = False
-				generateOtherLevels = True
+				peterPlayer.rect.x = width -10
+				peterPlayer.rect.y = 250
+				posx = -10
+				groupPeter.add(peterPlayer)
+				todos.add(peterPlayer)
+
 
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -716,19 +714,21 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_l:
+					elif event.key == pygame.K_LEFT:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_b:
+					elif event.key == pygame.K_DOWN:
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
 						#homero.Salto()
 						#homero.gravedad()
 						homero.direction = 0
+					elif event.key == pygame.K_ESCAPE:
+						continuar = not continuar
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:
@@ -753,29 +753,30 @@ if __name__ == '__main__':
 				if x.salud == 0:
 					groupStewie.remove(x)
 					todos.remove(x)
-					if quantitySte > 0:
-						spriteStewie = recortarSprite('source/FinalizadoSinFondo.png', 4, 5)
-						stewiePlayer = Stewie(spriteStewie)
-						stewiePlayer.rect.x = width -10
-						stewiePlayer.rect.y = 250
-						groupStewie.add(stewiePlayer)
-						todos.add(stewiePlayer)
-						quantitySte -= 1
-					elif quantitySte == 0:
-						print "Entro"
-						cartaSprite = recortarSprite('source/cartaunidasinfondo.png', 6, 1)
-						carta = Letter(cartaSprite)
-						carta.rect.x = width - 10
-						carta.rect.y = 500 - 100
-						letters.add(carta)
-						todos.add(carta)
-				if x.action != 0 and x.index == 2 and homero.action != 3:
+				if x.action != 0 and homero.action != 3:
 					homero.salud -= 1
 					sounds.herido.play()
 				if homero.salud == 0:
 					jugadores.remove(homero)
 					todos.remove(homero)
-					fin_juego = True
+					done = True
+
+			#colision entre homero y peter
+			ls_colhomer_peter = pygame.sprite.spritecollide(homero, groupPeter, False)
+			for x in ls_colhomer_peter:
+				if homero.action == 2:
+					x.salud -= 1
+					sounds.golpe.play()
+				if x.salud == 0:
+					groupPeter.remove(x)
+					todos.remove(x)
+					done = True
+				if x.action != 0 and homero.action != 3:
+					homero.salud -= 1
+					sounds.herido.play()
+				if homero.salud == 0:
+					jugadores.remove(homero)
+					todos.remove(homero)
 					done = True
 
 			#Colision entre agente y homero, descuenta salud de Homero si el agente esta dando un golpe y Homero no se esta defendiendo
@@ -821,7 +822,6 @@ if __name__ == '__main__':
 				print "Has ganado"
 				successLevel()
 				nivel += 1
-				generateOtherLevels = False
 				entrar = True
 
 
@@ -865,6 +865,7 @@ if __name__ == '__main__':
 			jugadores.update()
 			agents.update(homero.rect.x, homero.rect.y)
 			groupStewie.update(homero.rect.x, homero.rect.y)
+			groupPeter.update(homero.rect.x, homero.rect.y)
 			letters.update()
 			FuenteTitulo = pygame.font.Font('source/menu/Simpsonfont.ttf', 20)
 			Qdonu = FuenteTitulo.render(str(quantityDonuts),True, NEGRO)
@@ -876,13 +877,6 @@ if __name__ == '__main__':
 				pygame.draw.rect(pantalla, VERDE,(10,10 , homero.salud * 19.2 ,10))
 			else:
 				pygame.draw.rect(pantalla, ROJO,(10,10 , homero.salud * 19.2 ,10))
-
-			if nivel == 2 and generateOtherLevels:
-				pygame.draw.rect(pantalla, BLANCO,(width - 190,8 , width - 10 ,14))
-				if stewiePlayer.salud >= 10:
-					pygame.draw.rect(pantalla, VERDE, (width -200, 10, stewiePlayer.salud * (19.2 / 2), 10))
-				else:
-					pygame.draw.rect(pantalla, ROJO, (width -200, 10, stewiePlayer.salud * (19.2 / 2), 10))
 			pygame.display.flip()
 			reloj.tick(15)
 		while not done2:
@@ -892,6 +886,8 @@ if __name__ == '__main__':
 			if fin_juego:
 				pantalla.fill([0,0,0])
 				pantalla.blit(gameover,[100,25])
+			else:
+				pantalla.blit(win,[0,0])
 			pygame.display.flip()
 
 	elif a == 2:

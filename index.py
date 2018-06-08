@@ -700,11 +700,12 @@ if __name__ == '__main__':
 			if nivel == 3 and entrar == True:
 				spritePeter = recortarSprite('source/PeterSinFondo.png',5,5)
 				peterPlayer = Peter(spritePeter)
-				peterPlayer.rect.x = width -10
-				peterPlayer.rect.y = 250
-				posx = -10
-				groupPeter.add(peterPlayer)
-				todos.add(peterPlayer)
+				stewiePlayer.rect.x = width -10
+				stewiePlayer.rect.y = 250
+				positionDonuts(20)
+				positionBeerDuff(10)
+				entrar = False
+				generateOtherLevels = True
 
 
 			for event in pygame.event.get():

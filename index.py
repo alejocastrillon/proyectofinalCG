@@ -887,8 +887,7 @@ if __name__ == '__main__':
 			if fin_juego:
 				pantalla.fill([0,0,0])
 				pantalla.blit(gameover,[100,25])
-			else:
-				pantalla.blit(win,[0,0])
+			
 			pygame.display.flip()
 
 	elif a == 2:

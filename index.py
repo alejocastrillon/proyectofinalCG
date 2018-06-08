@@ -97,6 +97,10 @@ def successLevel():
 					elif nivel == 2 and cont == 0:
 						carta = pygame.image.load('source/c4.png')
 					elif cont == 1:
+						carta = pygame.image.load('source/nivelsiguiente'+str(nivel)+'.png')
+					cont += 1
+				elif event.key == pygame.K_RETURN:
+					if cont == 2:
 						pygame.mixer.music.stop()
 						fin = True
 					cont += 1
@@ -262,7 +266,7 @@ class homerPlayer(pygame.sprite.Sprite):
 		self.matrix = matrix
 		self.image = self.matrix[0][0]
 		self.rect = self.image.get_rect()
-		self.salud = 100
+		self.salud = 10
 		self.direction = 0
 		self.winner = False
 		self.action = 0
@@ -564,15 +568,9 @@ if __name__ == '__main__':
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
-<<<<<<< HEAD
-						'''homero.Salto()
+						homero.Salto()
 						homero.gravedad()
-						homero.direction = 0'''
-=======
-						#homero.Salto()
-						#homero.gravedad()
 						homero.direction = 0
->>>>>>> 29f870bbd8f88820994b9e799de429a18d7ab1bf
 					elif event.key == pygame.K_p:
 						homero.action = 2
 					elif event.key == pygame.K_d:

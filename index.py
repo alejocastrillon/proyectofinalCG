@@ -650,18 +650,18 @@ if __name__ == '__main__':
 					if event.key == pygame.K_RIGHT:
 						homero.action = 1
 						homero.direction = 1
-					elif event.key == pygame.K_l:
+					elif event.key == pygame.K_LEFT:
 						homero.action = 1
 						homero.direction = 2
 					elif event.key == pygame.K_UP:
 						homero.action = 1
 						homero.direction = 3
-					elif event.key == pygame.K_b:
+					elif event.key == pygame.K_DOWN:
 						homero.action = 1
 						homero.direction = 4
 					elif event.key == pygame.K_SPACE:
-						homero.Salto()
-						homero.gravedad()
+						#homero.Salto()
+						#homero.gravedad()
 						homero.direction = 0
 					elif event.key == pygame.K_p:
 						homero.action = 2

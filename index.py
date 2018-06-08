@@ -659,7 +659,6 @@ if __name__ == '__main__':
 					elif event.key == pygame.K_b:
 						homero.action = 1
 						homero.direction = 4
-
 					elif event.key == pygame.K_SPACE:
 						homero.Salto()
 						homero.gravedad()
